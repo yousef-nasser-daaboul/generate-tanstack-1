@@ -1,11 +1,10 @@
-import { mkdir, rename, writeFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import { generateClient } from "../utils/generate-clients/generate-clients";
+import { mkdir, open } from "node:fs/promises";
 import { generateFolderNameWithDateNow } from "../utils/helper/generate-folder-name";
 import fs from "fs";
 import archiver from "archiver";
 import { rimraf } from "rimraf";
+import path from "path";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -105,11 +104,7 @@ export default defineEventHandler(async (event) => {
 async function downloadModule(module: string) {
   try {
     const outputPath = "downloads";
-
-    // Ensure the downloads directory exists
-    if (!existsSync(outputPath)) {
-      await mkdir(outputPath, { recursive: true });
-    }
+    const filePath = path.join(outputPath, `${module}Client.ts`);
 
     const response = await fetch(
       `https://dev.sahabsoft.com/api/Common/ClientCode/GetFile?module=${module}`
@@ -119,13 +114,13 @@ async function downloadModule(module: string) {
       throw new Error(`Failed to download module: ${response.statusText}`);
     }
 
-    const fileContent = await response.arrayBuffer();
+    const arrayBuffer = await response.arrayBuffer();
+    const fileContent = Buffer.from(arrayBuffer); // Convert ArrayBuffer to Buffer
 
-    // Write the file as binary data
-    await writeFile(
-      outputPath + `/${module}Client.ts`,
-      Buffer.from(fileContent)
-    );
+    // Open the file in write mode ('w' flag clears the file before writing)
+    const fileHandle = await open(filePath, "w");
+    await fileHandle.write(fileContent);
+    await fileHandle.close();
 
     console.log(
       `Successfully downloaded ${module} module to downloads/${module}Client.ts`
