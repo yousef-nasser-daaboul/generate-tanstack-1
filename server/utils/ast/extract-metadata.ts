@@ -33,11 +33,12 @@ export interface EnumDetails {
   values: string[];
 }
 
-import { createRequire } from "module";
+// import { createRequire } from "module";
+import ts from "typescript";
 
 export function extractClassDetails(fileContent: string): ClassDetails[] {
-  const require = createRequire(import.meta.url);
-  const ts = require("typescript");
+  // const require = createRequire(import.meta.url);
+  // const ts = require("typescript");
   const sourceFile = ts.createSourceFile(
     "source.ts",
     fileContent,
@@ -111,8 +112,8 @@ export function extractClassDetails(fileContent: string): ClassDetails[] {
 export function extractInterfaceDetails(
   fileContent: string
 ): InterfaceDetails[] {
-  const require = createRequire(import.meta.url);
-  const ts = require("typescript");
+  // const require = createRequire(import.meta.url);
+  // const ts = require("typescript");
   const sourceFile = ts.createSourceFile(
     "source.ts",
     fileContent,
@@ -154,8 +155,8 @@ export function extractInterfaceDetails(
 }
 
 export function extractEnumDetails(fileContent: string): EnumDetails[] {
-  const require = createRequire(import.meta.url);
-  const ts = require("typescript");
+  // const require = createRequire(import.meta.url);
+  // const ts = require("typescript");
   const sourceFile = ts.createSourceFile(
     "source.ts",
     fileContent,
