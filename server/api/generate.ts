@@ -1,5 +1,4 @@
 import { rename, writeFile } from "node:fs/promises";
-import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { generateClient } from "../utils/generate-clients/generate-clients";
 import { generateFolderNameWithDateNow } from "../utils/helper/generate-folder-name";
@@ -115,9 +114,6 @@ async function downloadModule(module: string) {
     const fileContent = await response.arrayBuffer();
 
     const outputPath = "downloads";
-
-    // Ensure downloads directory exists
-    await mkdir(outputPath, { recursive: true });
 
     // Write the file as binary data
     await writeFile(
