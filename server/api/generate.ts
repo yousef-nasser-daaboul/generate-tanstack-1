@@ -1,4 +1,5 @@
-import { rename, writeFile } from "node:fs/promises";
+import { mkdir, rename, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { generateClient } from "../utils/generate-clients/generate-clients";
 import { generateFolderNameWithDateNow } from "../utils/helper/generate-folder-name";
@@ -103,6 +104,13 @@ export default defineEventHandler(async (event) => {
 
 async function downloadModule(module: string) {
   try {
+    const outputPath = "downloads";
+
+    // Ensure the downloads directory exists
+    if (!existsSync(outputPath)) {
+      await mkdir(outputPath, { recursive: true });
+    }
+
     const response = await fetch(
       `https://dev.sahabsoft.com/api/Common/ClientCode/GetFile?module=${module}`
     );
@@ -112,8 +120,6 @@ async function downloadModule(module: string) {
     }
 
     const fileContent = await response.arrayBuffer();
-
-    const outputPath = "downloads";
 
     // Write the file as binary data
     await writeFile(
@@ -132,24 +138,24 @@ async function downloadModule(module: string) {
 }
 
 // async function executeGenerate(module: string) {
-  // const { stdout, stderr } = await execAsync(
-  //   `cd generate-tanstack-config && bun i && bun dev --module ${module}`
-  // );
+// const { stdout, stderr } = await execAsync(
+//   `cd generate-tanstack-config && bun i && bun dev --module ${module}`
+// );
 
-  // if (stderr) {
-  //   console.error('stderr:', stderr);
-  // }
+// if (stderr) {
+//   console.error('stderr:', stderr);
+// }
 
-  // Extract archive path from stdout
-  // const archivePathMatch = stdout.match(/ARCHIVE_PATH:(.+)/);
-  // const archivePath = archivePathMatch ? archivePathMatch[1].trim() : null;
+// Extract archive path from stdout
+// const archivePathMatch = stdout.match(/ARCHIVE_PATH:(.+)/);
+// const archivePath = archivePathMatch ? archivePathMatch[1].trim() : null;
 
-  // if (archivePath) {
-  //   console.log("Generated archive at:", archivePath);
-  //   return archivePath.replace("../", "./");
-  // } else {
-  //   throw new Error("Archive path not found in output");
-  // }
+// if (archivePath) {
+//   console.log("Generated archive at:", archivePath);
+//   return archivePath.replace("../", "./");
+// } else {
+//   throw new Error("Archive path not found in output");
+// }
 // }
 
 // async function moveFileToPublic(archivePath: string) {
