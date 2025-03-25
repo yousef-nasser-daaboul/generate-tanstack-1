@@ -5,6 +5,7 @@ import fs from "fs";
 import archiver from "archiver";
 import { rimraf } from "rimraf";
 import path from "path";
+import { existsSync } from "node:fs";
 
 export default defineEventHandler(async (event) => {
   try {
@@ -103,8 +104,14 @@ export default defineEventHandler(async (event) => {
 
 async function downloadModule(module: string) {
   try {
-    const outputPath = "downloads";
+    const outputPath = path.join("/tmp", "downloads"); // Use /tmp for serverless environments
+
     const filePath = path.join(outputPath, `${module}Client.ts`);
+
+    // Ensure the directory exists
+    if (!existsSync(outputPath)) {
+      await mkdir(outputPath, { recursive: true });
+    }
 
     const response = await fetch(
       `https://dev.sahabsoft.com/api/Common/ClientCode/GetFile?module=${module}`
