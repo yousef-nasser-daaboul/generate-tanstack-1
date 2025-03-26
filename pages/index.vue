@@ -50,49 +50,49 @@ const startGenerate = async () => {
   loading.value = false;
 };
 
-// async function downloadModule(module: string) {
-//   const response = await fetch(
-//     `https://dev.sahabsoft.com/api/Common/ClientCode/GetFile?module=${module}`
-//   );
+async function downloadModule(module: string) {
+  const response = await fetch(
+    `https://dev.sahabsoft.com/api/Common/ClientCode/GetFile?module=${module}`
+  );
 
-//   if (!response.ok) {
-//     throw new Error(`Failed to download module: ${response.statusText}`);
-//   }
-//   return await response.text(); // Use .json() or .blob() if needed
-// }
+  if (!response.ok) {
+    throw new Error(`Failed to download module: ${response.statusText}`);
+  }
+  return await response.text(); // Use .json() or .blob() if needed
+}
 
-// const downloadZip = async (
-//   folderName: string,
-//   fileName: string,
-//   content: string,
-//   withFormat: boolean = true
-// ) => {
-//   const zip = new JSZip();
+const downloadZip = async (
+  folderName: string,
+  fileName: string,
+  content: string,
+  withFormat: boolean = true
+) => {
+  const zip = new JSZip();
 
-//   // Add folder
-//   const folder = zip.folder(folderName);
+  // Add folder
+  const folder = zip.folder(folderName);
 
-//   if (folder) {
-//     // const formattedContent = withFormat
-//     //   ? await prettier.format(content, {
-//     //       parser: "typescript",
-//     //       plugins: [parserTypescript, parserEstree],
-//     //       singleQuote: true,
-//     //       trailingComma: "all",
-//     //     })
-//     //   : content;
+  if (folder) {
+    const formattedContent = withFormat
+      ? await prettier.format(content, {
+          parser: "typescript",
+          plugins: [parserTypescript, parserEstree],
+          singleQuote: true,
+          trailingComma: "all",
+        })
+      : content;
 
-//     // Add files with content
-//     folder.file(fileName, content);
+    // Add files with content
+    folder.file(fileName, formattedContent);
 
-//     // Generate ZIP and download
-//     const blob = await zip.generateAsync({ type: "blob" });
-//     const link = document.createElement("a");
-//     link.href = URL.createObjectURL(blob);
-//     link.download = "generated.zip";
-//     link.click();
-//   }
-// };
+    // Generate ZIP and download
+    const blob = await zip.generateAsync({ type: "blob" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "generated.zip";
+    link.click();
+  }
+};
 </script>
 
 <template>
