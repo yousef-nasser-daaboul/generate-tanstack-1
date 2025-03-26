@@ -2,9 +2,9 @@
 import JSZip from "jszip";
 import { generate } from "~/composables/generate";
 import { generateFolderNameWithDateNow } from "~/utils/helper/generate-folder-name";
-import prettier from "prettier/standalone";
-import parserTypescript from "prettier/plugins/typescript";
-import parserEstree from "prettier/plugins/estree";
+// import prettier from "prettier/standalone";
+// import parserTypescript from "prettier/plugins/typescript";
+// import parserEstree from "prettier/plugins/estree";
 
 // Clients : Common, Customer, FCExchange, Finance, EntityManagement, Compliance, Utilities, Remittance, Accounting, SystemSettings
 const clients = [
@@ -73,17 +73,17 @@ const downloadZip = async (
   const folder = zip.folder(folderName);
 
   if (folder) {
-    const formattedContent = withFormat
-      ? await prettier.format(content, {
-          parser: "typescript",
-          plugins: [parserTypescript, parserEstree],
-          singleQuote: true,
-          trailingComma: "all",
-        })
-      : content;
+    // const formattedContent = withFormat
+    //   ? await prettier.format(content, {
+    //       parser: "typescript",
+    //       plugins: [parserTypescript, parserEstree],
+    //       singleQuote: true,
+    //       trailingComma: "all",
+    //     })
+    //   : content;
 
     // Add files with content
-    folder.file(fileName, formattedContent);
+    folder.file(fileName, content);
 
     // Generate ZIP and download
     const blob = await zip.generateAsync({ type: "blob" });
