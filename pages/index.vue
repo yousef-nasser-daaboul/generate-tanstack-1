@@ -27,18 +27,14 @@ const startGenerate = async () => {
   loading.value = true;
 
   // Download Module
-  const { data } = await useFetch(
-    "/api/download-module?module=" + selectedClient.value
-  );
+  const fileContent = await downloadModule(selectedClient.value);
 
-  console.log(data);
+  console.log(fileContent);
 
-  const dataValue = data.value as { fileContent?: string };
-
-  if (!dataValue.fileContent) return;
+  if (!fileContent) return;
 
   // Generate Content
-  const content = generate(dataValue.fileContent);
+  const content = generate(fileContent);
 
   console.log(content);
 
@@ -51,33 +47,19 @@ const startGenerate = async () => {
     content
   );
 
-  // const response = await $fetch("/api/write-file", {
-  //   method: "post",
-  //   body: {
-  //     module: selectedClient.value,
-  //     outputPath: "public/" + folderName,
-  //     content: content,
-  //   },
-  // });
-
-  // console.log(response);
-
-  // Download Archived Path
-  // if ((response as { archivePath: string }).archivePath) {
-  //   const response = await fetch("generated.zip");
-  //   const blob = await response.blob();
-  //   const url = window.URL.createObjectURL(blob);
-  //   const a = document.createElement("a");
-  //   a.href = url;
-  //   a.download = "generated.zip";
-  //   document.body.appendChild(a);
-  //   a.click();
-  //   window.URL.revokeObjectURL(url);
-  //   document.body.removeChild(a);
-  // }
-
   loading.value = false;
 };
+
+async function downloadModule(module: string) {
+  const response = await fetch(
+    `https://dev.sahabsoft.com/api/Common/ClientCode/GetFile?module=${module}`
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to download module: ${response.statusText}`);
+  }
+  return await response.text(); // Use .json() or .blob() if needed
+}
 
 const downloadZip = async (
   folderName: string,
