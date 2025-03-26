@@ -1,10 +1,10 @@
 <script setup lang="ts">
-// import JSZip from "jszip";
+import JSZip from "jszip";
 // import { generate } from "~/composables/generate";
-// import { generateFolderNameWithDateNow } from "~/utils/helper/generate-folder-name";
-// import prettier from "prettier/standalone";
-// import parserTypescript from "prettier/plugins/typescript";
-// import parserEstree from "prettier/plugins/estree";
+import { generateFolderNameWithDateNow } from "~/utils/helper/generate-folder-name";
+import prettier from "prettier/standalone";
+import parserTypescript from "prettier/plugins/typescript";
+import parserEstree from "prettier/plugins/estree";
 
 // Clients : Common, Customer, FCExchange, Finance, EntityManagement, Compliance, Utilities, Remittance, Accounting, SystemSettings
 const clients = [
