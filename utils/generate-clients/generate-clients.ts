@@ -11,19 +11,19 @@ export function generateClient(fileContent: string): string {
   let content = ``;
 
   const classes = extractClassDetails(fileContent);
-  // content += generateClasses(classes);
+  content += generateClasses(classes);
 
-  // const interfaces = extractInterfaceDetails(fileContent);
+  const interfaces = extractInterfaceDetails(fileContent);
 
-  // content += generateInterfaces(interfaces);
+  content += generateInterfaces(interfaces);
 
-  // const enums = extractEnumDetails(fileContent);
+  const enums = extractEnumDetails(fileContent);
 
-  // for (const enumInfo of enums) {
-  //   content += enumInfo.code;
-  // }
+  for (const enumInfo of enums) {
+    content += enumInfo.code;
+  }
 
-  // content += clientFunctionsGenerated;
+  content += clientFunctionsGenerated;
 
   return content;
 }

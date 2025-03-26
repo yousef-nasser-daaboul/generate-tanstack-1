@@ -41,73 +41,74 @@ export function extractClassDetails(fileContent: string): ClassDetails[] {
     ts.ScriptTarget.Latest
   );
 
-  // const classes: ClassDetails[] = [];
+  const classes: ClassDetails[] = [];
 
-  // ts.forEachChild(sourceFile, (node) => {
-  //   if (ts.isClassDeclaration(node)) {
-  //     const className = node.name?.text || "";
-  //     //   console.log(`Found class: ${className}`);
+  ts.forEachChild(sourceFile, (node) => {
+    if (ts.isClassDeclaration(node)) {
+      const className = node.name?.text || "";
+      //   console.log(`Found class: ${className}`);
 
-  //     const methods: MethodDetails[] = [];
+      const methods: MethodDetails[] = [];
 
-  //     // Extracting methods
-  //     ts.forEachChild(node, (classNode) => {
-  //       if (ts.isMethodDeclaration(classNode)) {
-  //         const methodName = classNode.name.getText(sourceFile);
-  //         const params: { paramName: string; paramType: string }[] =
-  //           classNode.parameters.map((param) => {
-  //             return {
-  //               paramName: param.name.getText(sourceFile),
-  //               paramType: param.type?.getText(sourceFile) || "unknown",
-  //             };
-  //           });
+      // Extracting methods
+      ts.forEachChild(node, (classNode) => {
+        if (ts.isMethodDeclaration(classNode)) {
+          const methodName = classNode.name.getText(sourceFile);
+          const params: { paramName: string; paramType: string }[] =
+            classNode.parameters.map((param) => {
+              return {
+                paramName: param.name.getText(sourceFile),
+                paramType: param.type?.getText(sourceFile) || "unknown",
+              };
+            });
 
-  //         const returnType = classNode.type
-  //           ? classNode.type.getText(sourceFile)
-  //           : "void";
+          const returnType = classNode.type
+            ? classNode.type.getText(sourceFile)
+            : "void";
 
-  //         // Extract method type from the method body
-  //         let methodType = "Unknown";
-  //         if (classNode.body) {
-  //           const bodyText = classNode.body.getFullText(sourceFile);
-  //           const methodMatch = bodyText.match(
-  //             /method:\s*["'](GET|POST|PUT|DELETE|PATCH)["']/i
-  //           );
-  //           if (methodMatch) {
-  //             methodType = methodMatch[1];
-  //           }
-  //         }
+          // Extract method type from the method body
+          let methodType = "Unknown";
+          if (classNode.body) {
+            const bodyText = classNode.body.getFullText(sourceFile);
+            const methodMatch = bodyText.match(
+              /method:\s*["'](GET|POST|PUT|DELETE|PATCH)["']/i
+            );
+            if (methodMatch) {
+              methodType = methodMatch[1];
+            }
+          }
 
-  //         // Extract url from the method body in :  let url_ = this.baseUrl + "/api/Remittance/TransferableCurrency/Delete?";
-  //         let url = "";
-  //         if (classNode.body) {
-  //           const bodyText = classNode.body.getFullText(sourceFile);
-  //           const urlMatch = bodyText.match(
-  //             /let url_ = this.baseUrl \+ "(.+)"/
-  //           );
-  //           url = urlMatch ? urlMatch[1] : "";
-  //         }
+          // Extract url from the method body in :  let url_ = this.baseUrl + "/api/Remittance/TransferableCurrency/Delete?";
+          let url = "";
+          if (classNode.body) {
+            const bodyText = classNode.body.getFullText(sourceFile);
+            const urlMatch = bodyText.match(
+              /let url_ = this.baseUrl \+ "(.+)"/
+            );
+            url = urlMatch ? urlMatch[1] : "";
+          }
 
-  //         methods.push({
-  //           name: methodName,
-  //           params,
-  //           returnType,
-  //           methodType,
-  //           url,
-  //         });
-  //       }
-  //     });
+          methods.push({
+            name: methodName,
+            params,
+            returnType,
+            methodType,
+            url,
+          });
+        }
+      });
 
-  //     classes.push({ className, methods });
-  //   }
-  // });
+      classes.push({ className, methods });
+    }
+  });
 
-  return [];
+  return classes;
 }
 
 export function extractInterfaceDetails(
   fileContent: string
 ): InterfaceDetails[] {
+  const ts = (window as any).ts;
   const sourceFile = ts.createSourceFile(
     "source.ts",
     fileContent,
@@ -149,6 +150,7 @@ export function extractInterfaceDetails(
 }
 
 export function extractEnumDetails(fileContent: string): EnumDetails[] {
+  const ts = (window as any).ts;
   const sourceFile = ts.createSourceFile(
     "source.ts",
     fileContent,
