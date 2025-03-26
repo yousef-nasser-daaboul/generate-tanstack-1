@@ -37,75 +37,75 @@ import ts from "typescript";
 
 export function extractClassDetails(fileContent: string): ClassDetails[] {
   console.log(fileContent);
-  
-  const sourceFile = ts.createSourceFile(
-    "source.ts",
-    fileContent,
-    ts.ScriptTarget.Latest
-  );
 
-  const classes: ClassDetails[] = [];
+  // const sourceFile = ts.createSourceFile(
+  //   "source.ts",
+  //   fileContent,
+  //   ts.ScriptTarget.Latest
+  // );
 
-  ts.forEachChild(sourceFile, (node) => {
-    if (ts.isClassDeclaration(node)) {
-      const className = node.name?.text || "";
-      //   console.log(`Found class: ${className}`);
+  // const classes: ClassDetails[] = [];
 
-      const methods: MethodDetails[] = [];
+  // ts.forEachChild(sourceFile, (node) => {
+  //   if (ts.isClassDeclaration(node)) {
+  //     const className = node.name?.text || "";
+  //     //   console.log(`Found class: ${className}`);
 
-      // Extracting methods
-      ts.forEachChild(node, (classNode) => {
-        if (ts.isMethodDeclaration(classNode)) {
-          const methodName = classNode.name.getText(sourceFile);
-          const params: { paramName: string; paramType: string }[] =
-            classNode.parameters.map((param) => {
-              return {
-                paramName: param.name.getText(sourceFile),
-                paramType: param.type?.getText(sourceFile) || "unknown",
-              };
-            });
+  //     const methods: MethodDetails[] = [];
 
-          const returnType = classNode.type
-            ? classNode.type.getText(sourceFile)
-            : "void";
+  //     // Extracting methods
+  //     ts.forEachChild(node, (classNode) => {
+  //       if (ts.isMethodDeclaration(classNode)) {
+  //         const methodName = classNode.name.getText(sourceFile);
+  //         const params: { paramName: string; paramType: string }[] =
+  //           classNode.parameters.map((param) => {
+  //             return {
+  //               paramName: param.name.getText(sourceFile),
+  //               paramType: param.type?.getText(sourceFile) || "unknown",
+  //             };
+  //           });
 
-          // Extract method type from the method body
-          let methodType = "Unknown";
-          if (classNode.body) {
-            const bodyText = classNode.body.getFullText(sourceFile);
-            const methodMatch = bodyText.match(
-              /method:\s*["'](GET|POST|PUT|DELETE|PATCH)["']/i
-            );
-            if (methodMatch) {
-              methodType = methodMatch[1];
-            }
-          }
+  //         const returnType = classNode.type
+  //           ? classNode.type.getText(sourceFile)
+  //           : "void";
 
-          // Extract url from the method body in :  let url_ = this.baseUrl + "/api/Remittance/TransferableCurrency/Delete?";
-          let url = "";
-          if (classNode.body) {
-            const bodyText = classNode.body.getFullText(sourceFile);
-            const urlMatch = bodyText.match(
-              /let url_ = this.baseUrl \+ "(.+)"/
-            );
-            url = urlMatch ? urlMatch[1] : "";
-          }
+  //         // Extract method type from the method body
+  //         let methodType = "Unknown";
+  //         if (classNode.body) {
+  //           const bodyText = classNode.body.getFullText(sourceFile);
+  //           const methodMatch = bodyText.match(
+  //             /method:\s*["'](GET|POST|PUT|DELETE|PATCH)["']/i
+  //           );
+  //           if (methodMatch) {
+  //             methodType = methodMatch[1];
+  //           }
+  //         }
 
-          methods.push({
-            name: methodName,
-            params,
-            returnType,
-            methodType,
-            url,
-          });
-        }
-      });
+  //         // Extract url from the method body in :  let url_ = this.baseUrl + "/api/Remittance/TransferableCurrency/Delete?";
+  //         let url = "";
+  //         if (classNode.body) {
+  //           const bodyText = classNode.body.getFullText(sourceFile);
+  //           const urlMatch = bodyText.match(
+  //             /let url_ = this.baseUrl \+ "(.+)"/
+  //           );
+  //           url = urlMatch ? urlMatch[1] : "";
+  //         }
 
-      classes.push({ className, methods });
-    }
-  });
+  //         methods.push({
+  //           name: methodName,
+  //           params,
+  //           returnType,
+  //           methodType,
+  //           url,
+  //         });
+  //       }
+  //     });
 
-  return classes;
+  //     classes.push({ className, methods });
+  //   }
+  // });
+
+  return [];
 }
 
 export function extractInterfaceDetails(
