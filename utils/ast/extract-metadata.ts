@@ -36,6 +36,8 @@ export interface EnumDetails {
 import ts from "typescript";
 
 export function extractClassDetails(fileContent: string): ClassDetails[] {
+  console.log(fileContent);
+  
   const sourceFile = ts.createSourceFile(
     "source.ts",
     fileContent,
