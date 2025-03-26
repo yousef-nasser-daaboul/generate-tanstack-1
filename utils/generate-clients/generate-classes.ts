@@ -1,4 +1,4 @@
-import { ClassDetails } from "../ast/extract-metadata";
+import { type ClassDetails } from "../ast/extract-metadata";
 import { generateMethods } from "./generate-methods";
 import { generateParamsInterfaces } from "./generate-params-interfaces";
 

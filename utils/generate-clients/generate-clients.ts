@@ -1,5 +1,3 @@
-import * as fs from "fs";
-import { writeFormattedFile } from "../helper/writer";
 import {
   extractClassDetails,
   extractInterfaceDetails,
@@ -9,13 +7,7 @@ import { clientFunctionsGenerated } from "../helper/client-functions-generated";
 import { generateInterfaces } from "./generate-interfaces";
 import { generateClasses } from "./generate-classes";
 
-export async function generateClient(
-  inputPath: string,
-  outputPath: string,
-  clientName: string
-): Promise<void> {
-  const fileContent = fs.readFileSync(inputPath, "utf8");
-
+export function generateClient(fileContent: string): string {
   let content = ``;
 
   const classes = extractClassDetails(fileContent);
@@ -33,5 +25,5 @@ export async function generateClient(
 
   content += clientFunctionsGenerated;
 
-  await writeFormattedFile(outputPath, `${clientName}.client.ts`, content);
+  return content;
 }

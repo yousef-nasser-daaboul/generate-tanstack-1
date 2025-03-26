@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { generate } from "~/composables/generate";
+import { generateFolderNameWithDateNow } from "~/utils/helper/generate-folder-name";
+
 // Clients : Common, Customer, FCExchange, Finance, EntityManagement, Compliance, Utilities, Remittance, Accounting, SystemSettings
 const clients = [
   "Common",
@@ -12,16 +15,45 @@ const clients = [
   "Accounting",
   "SystemSettings",
 ];
+
 const selectedClient = ref();
 const loading = ref(false);
-const generate = async () => {
+
+const startGenerate = async () => {
   loading.value = true;
+
+  // Download Module
   const { data } = await useFetch(
-    "/api/generate?module=" + selectedClient.value
+    "/api/download-module?module=" + selectedClient.value
   );
+
   console.log(data);
-  const dataValue = data.value as { archivePath?: string };
-  if (dataValue.archivePath) {
+
+  const dataValue = data.value as { fileContent?: string };
+
+  if (!dataValue.fileContent) return;
+
+  // Generate Content
+  const content = generate(dataValue.fileContent);
+
+  console.log(content);
+
+  // Write File
+  const folderName = generateFolderNameWithDateNow();
+
+  const response = await $fetch("/api/write-file", {
+    method: "post",
+    body: {
+      module: selectedClient.value,
+      outputPath: "public/" + folderName,
+      content: content,
+    },
+  });
+
+  console.log(response);
+
+  // Download Archived Path
+  if ((response as { archivePath: string }).archivePath) {
     const response = await fetch("generated.zip");
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
@@ -33,6 +65,7 @@ const generate = async () => {
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
   }
+
   loading.value = false;
 };
 </script>
@@ -41,12 +74,12 @@ const generate = async () => {
   <div class="flex flex-col items-center justify-center h-screen gap-5">
     <h1 class="text-4xl font-bold">Hello World</h1>
     <Select
+      v-model="selectedClient"
       class="w-52"
       :items="clients"
       label="Select Module"
-      v-model="selectedClient"
     />
-    <UButton class="w-52" block @click="generate" :disabled="loading">
+    <UButton class="w-52" block @click="startGenerate" :disabled="loading">
       <span v-if="loading">Loading...</span>
       <span v-else>Generate</span>
     </UButton>

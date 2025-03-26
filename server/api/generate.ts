@@ -1,6 +1,6 @@
-import { generateClient } from "../utils/generate-clients/generate-clients";
+// import { generateClient } from "../utils/generate-clients/generate-clients";
 import { mkdir, open } from "node:fs/promises";
-import { generateFolderNameWithDateNow } from "../utils/helper/generate-folder-name";
+// import { generateFolderNameWithDateNow } from "../utils/helper/generate-folder-name";
 import fs from "fs";
 import archiver from "archiver";
 import { rimraf } from "rimraf";
@@ -18,23 +18,23 @@ export default defineEventHandler(async (event) => {
 
       console.log("after downloaded ===>", outputPath);
 
-      const folderName = generateFolderNameWithDateNow();
+      // const folderName = generateFolderNameWithDateNow();
 
-      console.log("folderName ==>", folderName);
+      // console.log("folderName ==>", folderName);
 
-      await generateClient(
-        outputPath + "/" + module + "Client.ts", // input path
-        "public/" + folderName,
-        module.toLowerCase()
-      );
+      // await generateClient(
+      //   outputPath + "/" + module + "Client.ts", // input path
+      //   "public/" + folderName,
+      //   module.toLowerCase()
+      // );
 
-      const archivePath = "public/generated.zip";
-      archiveResult(archivePath, "public/" + folderName);
+      // const archivePath = "public/generated.zip";
+      // archiveResult(archivePath, "public/" + folderName);
 
       return {
         success: true,
         message: "Commands executed successfully",
-        archivePath: archivePath,
+        // archivePath: archivePath,
       };
     }
 
