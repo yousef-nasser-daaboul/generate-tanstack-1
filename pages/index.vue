@@ -27,25 +27,25 @@ const startGenerate = async () => {
   loading.value = true;
 
   // Download Module
-  // const fileContent = await downloadModule(selectedClient.value);
+  const fileContent = await downloadModule(selectedClient.value);
 
-  // console.log(fileContent);
+  console.log(fileContent);
 
-  // if (!fileContent) return;
+  if (!fileContent) return;
 
-  // // Generate Content
-  // const content = generate(fileContent);
+  // Generate Content
+  const content = generate(fileContent);
 
-  // console.log(content);
+  console.log(content);
 
-  // // Write File
-  // const folderName = generateFolderNameWithDateNow();
+  // Write File
+  const folderName = generateFolderNameWithDateNow();
 
-  // downloadZip(
-  //   folderName,
-  //   `${selectedClient.value.toLowerCase()}.client.ts`,
-  //   content
-  // );
+  downloadZip(
+    folderName,
+    `${selectedClient.value.toLowerCase()}.client.ts`,
+    content
+  );
 
   loading.value = false;
 };
