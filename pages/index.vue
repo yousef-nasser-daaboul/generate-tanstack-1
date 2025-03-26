@@ -48,13 +48,13 @@ async function startGenerate() {
   console.log(content);
 
   // // Write File
-  // const folderName = generateFolderNameWithDateNow();
+  const folderName = generateFolderNameWithDateNow();
 
-  // downloadZip(
-  //   folderName,
-  //   `${selectedClient.value.toLowerCase()}.client.ts`,
-  //   content
-  // );
+  downloadZip(
+    folderName,
+    `${selectedClient.value.toLowerCase()}.client.ts`,
+    content
+  );
 
   loading.value = false;
 }
