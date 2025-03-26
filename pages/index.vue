@@ -23,7 +23,7 @@ const clients = [
 const selectedClient = ref();
 const loading = ref(false);
 
-const startGenerate = async () => {
+async function startGenerate() {
   loading.value = true;
 
   // Download Module
@@ -31,12 +31,12 @@ const startGenerate = async () => {
 
   console.log(fileContent);
 
-  // if (!fileContent) return;
+  if (!fileContent) return;
 
-  // // Generate Content
-  // const content = generate(fileContent);
+  // Generate Content
+  const content = generate(fileContent);
 
-  // console.log(content);
+  console.log(content);
 
   // // Write File
   // const folderName = generateFolderNameWithDateNow();
@@ -48,7 +48,7 @@ const startGenerate = async () => {
   // );
 
   loading.value = false;
-};
+}
 
 async function downloadModule(module: string) {
   const response = await fetch(
