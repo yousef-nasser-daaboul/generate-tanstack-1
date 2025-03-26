@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import JSZip from "jszip";
 import { generate } from "~/composables/generate";
 import { generateFolderNameWithDateNow } from "~/utils/helper/generate-folder-name";
+import prettier from "prettier/standalone";
+import parserTypescript from "prettier/plugins/typescript";
+import parserEstree from "prettier/plugins/estree";
 
 // Clients : Common, Customer, FCExchange, Finance, EntityManagement, Compliance, Utilities, Remittance, Accounting, SystemSettings
 const clients = [
@@ -41,32 +45,71 @@ const startGenerate = async () => {
   // Write File
   const folderName = generateFolderNameWithDateNow();
 
-  const response = await $fetch("/api/write-file", {
-    method: "post",
-    body: {
-      module: selectedClient.value,
-      outputPath: "public/" + folderName,
-      content: content,
-    },
-  });
+  downloadZip(
+    folderName,
+    `${selectedClient.value.toLowerCase()}.client.ts`,
+    content
+  );
 
-  console.log(response);
+  // const response = await $fetch("/api/write-file", {
+  //   method: "post",
+  //   body: {
+  //     module: selectedClient.value,
+  //     outputPath: "public/" + folderName,
+  //     content: content,
+  //   },
+  // });
+
+  // console.log(response);
 
   // Download Archived Path
-  if ((response as { archivePath: string }).archivePath) {
-    const response = await fetch("generated.zip");
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "generated.zip";
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
-  }
+  // if ((response as { archivePath: string }).archivePath) {
+  //   const response = await fetch("generated.zip");
+  //   const blob = await response.blob();
+  //   const url = window.URL.createObjectURL(blob);
+  //   const a = document.createElement("a");
+  //   a.href = url;
+  //   a.download = "generated.zip";
+  //   document.body.appendChild(a);
+  //   a.click();
+  //   window.URL.revokeObjectURL(url);
+  //   document.body.removeChild(a);
+  // }
 
   loading.value = false;
+};
+
+const downloadZip = async (
+  folderName: string,
+  fileName: string,
+  content: string,
+  withFormat: boolean = true
+) => {
+  const zip = new JSZip();
+
+  // Add folder
+  const folder = zip.folder(folderName);
+
+  if (folder) {
+    const formattedContent = withFormat
+      ? await prettier.format(content, {
+          parser: "typescript",
+          plugins: [parserTypescript, parserEstree],
+          singleQuote: true,
+          trailingComma: "all",
+        })
+      : content;
+
+    // Add files with content
+    folder.file(fileName, formattedContent);
+
+    // Generate ZIP and download
+    const blob = await zip.generateAsync({ type: "blob" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "generated.zip";
+    link.click();
+  }
 };
 </script>
 
