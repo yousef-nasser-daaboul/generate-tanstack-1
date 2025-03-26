@@ -6,6 +6,15 @@ import prettier from "prettier/standalone";
 import parserTypescript from "prettier/plugins/typescript";
 import parserEstree from "prettier/plugins/estree";
 
+useHead({
+  script: [
+    {
+      src: "https://cdnjs.cloudflare.com/ajax/libs/typescript/5.7.3/typescript.min.js",
+      async: true,
+    },
+  ],
+});
+
 // Clients : Common, Customer, FCExchange, Finance, EntityManagement, Compliance, Utilities, Remittance, Accounting, SystemSettings
 const clients = [
   "Common",

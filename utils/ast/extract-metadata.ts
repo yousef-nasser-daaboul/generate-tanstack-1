@@ -33,16 +33,15 @@ export interface EnumDetails {
   values: string[];
 }
 
-import ts from "typescript";
+
+const ts = (window as any).ts;
 
 export function extractClassDetails(fileContent: string): ClassDetails[] {
-  console.log(fileContent);
-
-  // const sourceFile = ts.createSourceFile(
-  //   "source.ts",
-  //   fileContent,
-  //   ts.ScriptTarget.Latest
-  // );
+  const sourceFile = ts.createSourceFile(
+    "source.ts",
+    fileContent,
+    ts.ScriptTarget.Latest
+  );
 
   // const classes: ClassDetails[] = [];
 
