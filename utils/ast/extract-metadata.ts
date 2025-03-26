@@ -33,10 +33,8 @@ export interface EnumDetails {
   values: string[];
 }
 
-
-const ts = (window as any).ts;
-
 export function extractClassDetails(fileContent: string): ClassDetails[] {
+  const ts = (window as any).ts;
   const sourceFile = ts.createSourceFile(
     "source.ts",
     fileContent,
