@@ -1,23 +1,27 @@
-import type { MethodDetails, ParamDetails } from "../ast/extract-metadata";
+import {
+  MethodType,
+  type MethodDetails,
+  type ParamDetails,
+} from "../ast/extract-metadata";
 import { getFirstLetterUpperCase } from "../helper/helper";
 
 export function generateMethods(methods: MethodDetails[], className: string) {
   return methods
     .filter((method) => !method.name.startsWith("process"))
     .map((method) => {
-      if (method.methodType === "GET" || method.methodType === "DELETE") {
+      if (method.httpMethod === "GET" || method.httpMethod === "DELETE") {
         return `
             ${method.name}(
                 body${checkIfAllParamsNullable(method.params)}: I${className.replace("Client", "")}${getFirstLetterUpperCase(method.name)}Params
             ): ${method.returnType} {
                 let url_ = this.baseUrl + "${method.url}";
-                url_ = addQueryParamsToUrl(url_, body);
+                url_ = ${method.methodType === MethodType.AddQueryParam ? "addQueryParamsToUrl(url_, body)" : 'url_.replace(/[?&]$/, "")'};
 
                 let options_: AxiosRequestConfig = {
-                    method: "${method.methodType}",
+                    method: "${method.httpMethod}",
                     url: url_,
                     headers: {
-                        Accept: "text/plain",
+                      ${generateHeaders(method)}
                     },
                 };
 
@@ -29,20 +33,20 @@ export function generateMethods(methods: MethodDetails[], className: string) {
             ${method.name}(${generateMutateParams(
               method.params,
               method.name,
-              className
+              className,
+              method.methodType
             )}): ${method.returnType} {
                 let url_ = this.baseUrl + "${method.url}";
                 url_ = url_.replace(/[?&]$/, "");
 
-                const content_ = JSON.stringify(body);
+                const content_ = ${method.methodType === MethodType.FormData ? "objectToFormData" : "JSON.stringify"}(body);
 
                 let options_: AxiosRequestConfig = {
                     data: content_,
-                    method: "${method.methodType}",
+                    method: "${method.httpMethod}",
                     url: url_,
                     headers: {
-                        "Content-Type": "application/json",
-                        Accept: "text/plain",
+                      ${generateHeaders(method)}
                     },
                 };
 
@@ -54,6 +58,11 @@ export function generateMethods(methods: MethodDetails[], className: string) {
     .join("\n");
 }
 
+function generateHeaders(method: MethodDetails) {
+  return method.headers
+    .map((header) => `"${header.key}":"${header.value}"`)
+    .join(",");
+}
 function checkIfAllParamsNullable(params: ParamDetails[]) {
   return params
     .filter((param) => !["branchIdHeader", "signal"].includes(param.paramName))
@@ -69,18 +78,25 @@ function checkIfParamNullable(paramType: string) {
 function generateMutateParams(
   params: ParamDetails[],
   methodName: string,
-  className: string
+  className: string,
+  methodType: MethodType
 ) {
   let content = "";
   if (params.find((param) => param.paramName === "body")) {
-    content += `body${checkIfParamNullable(
-      params.find((param) => param.paramName === "body")?.paramType ?? ""
-    )}: ${params
+    content += `body${
+      methodType === MethodType.FormData
+        ? ""
+        : checkIfParamNullable(
+            params.find((param) => param.paramName === "body")?.paramType ?? ""
+          )
+    }: ${params
       .find((param) => param.paramName === "body")
       ?.paramType?.replace("| undefined", "")}
           `;
   } else {
-    content += `body${checkIfAllParamsNullable(params)}: I${className.replace("Client", "")}${getFirstLetterUpperCase(methodName)}Dto`;
+    content += `body${
+      methodType === MethodType.FormData ? "" : checkIfAllParamsNullable(params)
+    }: I${className.replace("Client", "")}${getFirstLetterUpperCase(methodName)}Dto`;
   }
   return content;
 }

@@ -7,7 +7,7 @@ export function generateParamsInterfaces(
 ) {
   return methods
     .map((method) => {
-      if (method.methodType === "GET" || method.methodType === "DELETE") {
+      if (method.httpMethod === "GET" || method.httpMethod === "DELETE") {
         return `
             export interface I${className.replace("Client", "")}${getFirstLetterUpperCase(method.name)}Params {
                 ${method.params

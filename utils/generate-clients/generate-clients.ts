@@ -10,7 +10,7 @@ import { generateClasses } from "./generate-classes";
 export function generateClient(fileContent: string): string {
   let content = ``;
 
-  const classes = extractClassDetails(fileContent);
+  const classes = extractClassDetails(fileContent, ["ApiException"]);
   content += generateClasses(classes);
 
   const interfaces = extractInterfaceDetails(fileContent);
