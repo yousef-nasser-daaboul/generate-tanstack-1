@@ -15,7 +15,6 @@ const selected = ref();
 </script>
 
 <template>
-  {{ selected }}dddd
   <UDropdown
     @change="
       (e) => {

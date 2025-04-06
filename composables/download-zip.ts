@@ -19,12 +19,7 @@ export const downloadZip = async (
     // Handle the first file separately
     const firstFile = contentFiles[0];
     const formattedFirstContent = withFormat
-      ? await prettier.format(firstFile.content, {
-          parser: "typescript",
-          plugins: [parserTypescript, parserEstree],
-          singleQuote: true,
-          trailingComma: "all",
-        })
+      ? await formatContent(firstFile.content)
       : firstFile.content;
 
     folder.file(firstFile.name, formattedFirstContent);

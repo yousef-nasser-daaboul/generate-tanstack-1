@@ -13,6 +13,10 @@ useHead({
   ],
 });
 
+definePageMeta({
+  middleware: "auth",
+});
+
 // Clients : Common, Customer, FCExchange, Finance, EntityManagement, Compliance, Utilities, Remittance, Accounting, SystemSettings
 const clients = [
   "Common",
@@ -27,7 +31,7 @@ const clients = [
   "SystemSettings",
 ];
 
-const selectedClient = ref();
+const selectedClient = ref(clients[0]);
 const downloadLoading = ref(false);
 const generateLoading = ref(false);
 const generateTime = ref("");
@@ -49,16 +53,18 @@ async function startGenerate() {
   generateLoading.value = true;
   const start = performance.now();
 
-  generate(fileContent, selectedClient.value);
+  generate(fileContent, selectedClient.value,withTanstack.value);
 
   const end = performance.now();
   generateLoading.value = false;
   generateTime.value = ((end - start) / 1000).toFixed(2);
 }
+
+const withTanstack = ref(false);
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center h-screen gap-5">
+  <div class="flex flex-col justify-center gap-5">
     <h1 class="text-4xl font-bold">Hello World</h1>
     <Select
       v-model="selectedClient"
@@ -66,6 +72,12 @@ async function startGenerate() {
       :items="clients"
       label="Select Module"
     />
+
+    <UCheckbox v-model="withTanstack">
+      <template #label>
+        <div class="text-green-400">With Tanstack</div>
+      </template>
+    </UCheckbox>
     <UButton
       class="w-52"
       block

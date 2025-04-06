@@ -6,12 +6,11 @@ interface DropdownProps {
 
 const props = defineProps<DropdownProps>();
 const selected = defineModel<string>();
-selected.value = props.items[0];
 </script>
 
 <template>
-  <div>
-    <label>{{ props.label }}</label>
-    <USelect v-model="selected" :options="props.items" />
+  <div class="flex flex-col">
+    <label class="text-green-400">{{ props.label }}</label>
+    <USelect v-model="selected" :items="props.items" />
   </div>
 </template>

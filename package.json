@@ -10,7 +10,7 @@
     "start": "node .output/server/index.mjs"
   },
   "dependencies": {
-    "@nuxt/ui": "2.21.0",
+    "@nuxt/ui": "3.0.2",
     "jszip": "^3.10.1",
     "nuxt": "^3.16.1",
     "prettier": "^3.5.3",
