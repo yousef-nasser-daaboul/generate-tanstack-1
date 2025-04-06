@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { downloadModule } from "~/composables/download-module";
-import { downloadZip } from "~/composables/download-zip";
 import { generate } from "~/composables/generate";
-import { generateFolderNameWithDateNow } from "~/utils/helper/generate-folder-name";
 
 useHead({
   script: [
@@ -53,7 +51,7 @@ async function startGenerate() {
   generateLoading.value = true;
   const start = performance.now();
 
-  generate(fileContent, selectedClient.value,withTanstack.value);
+  generate(fileContent, selectedClient.value, withTanstack.value);
 
   const end = performance.now();
   generateLoading.value = false;
@@ -66,6 +64,8 @@ const withTanstack = ref(false);
 <template>
   <div class="flex flex-col justify-center gap-5">
     <h1 class="text-4xl font-bold">Hello World</h1>
+
+    <AnimationTitle />
     <Select
       v-model="selectedClient"
       class="w-52"
