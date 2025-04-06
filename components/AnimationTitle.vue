@@ -19,7 +19,6 @@ const typeArray = ref([
   "May God protect Syria",
   "May God grant victory to Syria",
   "May God bless Syria with peace",
-  "May God have mercy on Syria's martyrs",
   "May God grant freedom to Syria",
 ]);
 
@@ -62,8 +61,8 @@ setTimeout(typeText, newTextDelay.value + 200);
 </script>
 
 <template>
-  <div class="container mb-5">
-    <h1 class="text-4xl font-bold text-type">
+  <div class="relative container mb-16 w-full">
+    <h1 class="text-4xl absolute w-full font-bold text-type">
       <span class="typed-text">{{ typeValue }}</span>
       <span class="cursor" :class="{ typing: typeStatus }">&nbsp;</span>
     </h1>
@@ -79,6 +78,7 @@ setTimeout(typeText, newTextDelay.value + 200);
 .text-type {
   font-size: 1.5rem;
   font-weight: normal;
+  line-height: 2rem;
 }
 
 .text-type .typed-text {
