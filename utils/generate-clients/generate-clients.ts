@@ -7,10 +7,13 @@ import { clientFunctionsGenerated } from "../helper/client-functions-generated";
 import { generateInterfaces } from "./generate-interfaces";
 import { generateClasses } from "./generate-classes";
 
-export function generateClient(fileContent: string): string {
+export function generateClient(
+  fileContent: string,
+  exceptClasses: string[]
+): string {
   let content = ``;
 
-  const classes = extractClassDetails(fileContent, ["ApiException"]);
+  const classes = extractClassDetails(fileContent, exceptClasses);
   content += generateClasses(classes);
 
   const interfaces = extractInterfaceDetails(fileContent);

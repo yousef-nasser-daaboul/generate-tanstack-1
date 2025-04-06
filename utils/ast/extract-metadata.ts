@@ -86,11 +86,22 @@ export function extractClassDetails(
         if (ts.isMethodDeclaration(classNode)) {
           const methodName = classNode.name.getText(sourceFile);
 
+          // Skip methods starting with "process"
+          if (methodName.startsWith("process")) {
+            return;
+          }
+
           const params =
-            classNode.parameters?.map((param) => ({
-              paramName: param.name.getText(sourceFile),
-              paramType: param.type?.getText(sourceFile) ?? "unknown",
-            })) ?? [];
+            classNode.parameters
+              ?.filter(
+                (param) =>
+                  param.name.getText(sourceFile) !== "branchIdHeader" &&
+                  param.name.getText(sourceFile) !== "signal"
+              )
+              .map((param) => ({
+                paramName: param.name.getText(sourceFile),
+                paramType: param.type?.getText(sourceFile) ?? "unknown",
+              })) ?? [];
 
           const returnType = classNode.type?.getText(sourceFile) ?? "void";
 

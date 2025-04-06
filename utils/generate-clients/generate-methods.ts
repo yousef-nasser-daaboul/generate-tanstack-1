@@ -63,7 +63,7 @@ function generateHeaders(method: MethodDetails) {
     .map((header) => `"${header.key}":"${header.value}"`)
     .join(",");
 }
-function checkIfAllParamsNullable(params: ParamDetails[]) {
+export function checkIfAllParamsNullable(params: ParamDetails[]) {
   return params
     .filter((param) => !["branchIdHeader", "signal"].includes(param.paramName))
     .every((param) => param.paramType.includes("undefined"))
@@ -75,7 +75,7 @@ function checkIfParamNullable(paramType: string) {
   return paramType.includes("undefined") ? "?" : "";
 }
 
-function generateMutateParams(
+export function generateMutateParams(
   params: ParamDetails[],
   methodName: string,
   className: string,

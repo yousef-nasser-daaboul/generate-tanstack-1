@@ -35,28 +35,22 @@ const generateTime = ref("");
 async function startGenerate() {
   // Download Module
   downloadLoading.value = true;
-  const fileContent = await downloadModule(selectedClient.value);
+  let fileContent = "";
+  try {
+    fileContent = await downloadModule(selectedClient.value);
+
+    if (!fileContent) return;
+  } catch (e) {
+    console.error("Error Network");
+  }
   downloadLoading.value = false;
-
-  // console.log(fileContent);
-
-  if (!fileContent) return;
 
   // Generate Content
   generateLoading.value = true;
   const start = performance.now();
-  const content = generate(fileContent);
 
-  // console.log(content);
+  generate(fileContent, selectedClient.value);
 
-  // // Write File
-  const folderName = generateFolderNameWithDateNow();
-
-  downloadZip(
-    folderName,
-    `${selectedClient.value.toLowerCase()}.client.ts`,
-    content
-  );
   const end = performance.now();
   generateLoading.value = false;
   generateTime.value = ((end - start) / 1000).toFixed(2);
