@@ -3,7 +3,10 @@ import {
   extractInterfaceDetails,
 } from "../ast/extract-metadata";
 import { extractEnumDetails } from "../ast/extract-metadata";
-import { clientFunctionsGenerated } from "../helper/client-functions-generated";
+import {
+  clientFunctionsGenerated,
+  clientStartGenerated,
+} from "../helper/client-functions-generated";
 import { generateInterfaces } from "./generate-interfaces";
 import { generateClasses } from "./generate-classes";
 
@@ -11,7 +14,7 @@ export function generateClient(
   fileContent: string,
   exceptClasses: string[]
 ): string {
-  let content = ``;
+  let content = clientStartGenerated;
 
   const classes = extractClassDetails(fileContent, exceptClasses);
   content += generateClasses(classes);

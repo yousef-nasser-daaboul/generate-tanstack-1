@@ -10,7 +10,9 @@ import { generateQueryPathValue } from "./generate-query-keys";
 
 export function generateClientQueries(
   astObj: ClassDetails[],
-  clientName: string
+  clientName: string,
+  exceptedTypes: string[],
+  replacementTypes: [string, string][]
 ) {
   // Generate Imports
   let content = `import type { Ref } from "vue"; import { useQueryBuilder } from "~base/composables/useQueryBuilder"; import {`;
@@ -23,31 +25,29 @@ export function generateClientQueries(
 
   if (astObj.length > 0) {
     // Import
+    const paramTypeSet = new Set<string>();
+    astObj.forEach((classDetail) => {
+      classDetail.methods
+        .filter((method) => method.httpMethod === HttpMethod.GET)
+        .forEach((method) => {
+          method.params
+            .filter(
+              (param) =>
+                param.paramType && !exceptedTypes.includes(param.paramType)
+            )
+            .forEach((param) => {
+              const cleanedType = replacementTypes.reduce(
+                (type, [from, to]) => type.replaceAll(from, to),
+                param.paramType
+              );
+              paramTypeSet.add(cleanedType);
+            });
+        });
+    });
     content += "import type {";
-    content += astObj
-      .map((classDetail) => {
-        const methodParams = classDetail.methods
-          .filter((method) => method.httpMethod === HttpMethod.GET)
-          .map((method) => method.params)
-          .flatMap((params) =>
-            params
-              .filter(
-                (param) =>
-                  param.paramType &&
-                  param.paramType !== "undefined" &&
-                  param.paramType !== "string | undefined" &&
-                  param.paramType !== "number | undefined" &&
-                  param.paramType !== "boolean | undefined"
-              )
-              .map((param) => param.paramType.replace("| undefined", ""))
-          )
-          .join(",");
-        return methodParams;
-      })
-      .filter((params) => params.length > 0)
-      .join(",");
-    // content += `} from "~mig/utils/${clientName.replace(".", "/")}/${clientName}";`;
+    content += Array.from(paramTypeSet).join(",");
     content += `} from "../${clientName.replace(".", "/")}.client";`;
+
     // Import Filters Types
     content += "import type {";
 

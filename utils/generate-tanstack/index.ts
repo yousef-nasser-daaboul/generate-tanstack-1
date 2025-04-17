@@ -9,14 +9,26 @@ import { generateQueries } from "./generate-queries";
 export function generateTanstack(
   fileContent: string,
   clientName: string,
-  exceptClasses: string[]
+  exceptClasses: string[],
+  exceptedTypes: string[],
+  replacementTypes: [string, string][]
 ) {
   const astObj = extractClassDetails(fileContent, exceptClasses);
 
   const indexContent = generateIndex(astObj, clientName);
   const queryKeysContent = generateQueryKeys(astObj, clientName);
-  const clientQueriesContent = generateClientQueries(astObj, clientName);
-  const mutateQueriesContent = generateMutateQueries(astObj, clientName);
+  const clientQueriesContent = generateClientQueries(
+    astObj,
+    clientName,
+    exceptedTypes,
+    replacementTypes
+  );
+  const mutateQueriesContent = generateMutateQueries(
+    astObj,
+    clientName,
+    exceptedTypes,
+    replacementTypes
+  );
   const mutationsContent = generateMutations(astObj, clientName);
   const queriesContent = generateQueries(astObj, clientName);
 

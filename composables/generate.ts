@@ -1,7 +1,5 @@
 import { generateClient } from "~/utils/generate-clients/generate-clients";
 import { generateTanstack } from "~/utils/generate-tanstack";
-import { downloadZip } from "./download-zip";
-import { downloadFile } from "./download-file";
 
 export async function generate(
   fileContent: string,
@@ -9,6 +7,19 @@ export async function generate(
   withTanstack: boolean
 ) {
   const exceptClasses = ["ApiException"];
+  const exceptedTypes = [
+    "undefined",
+    "string[] | undefined",
+    "boolean[] | undefined",
+    "number[] | undefined",
+    "string | undefined",
+    "number | undefined",
+    "boolean | undefined",
+  ];
+  const replacementTypes: [string, string][] = [
+    [" | undefined", ""],
+    ["[]", ""],
+  ];
 
   // GenerateClient
   const content = generateClient(fileContent, exceptClasses);
@@ -29,7 +40,13 @@ export async function generate(
       mutationsContent,
       queriesContent,
       queryKeysContent,
-    } = generateTanstack(fileContent, moduleName, exceptClasses);
+    } = generateTanstack(
+      fileContent,
+      moduleName,
+      exceptClasses,
+      exceptedTypes,
+      replacementTypes
+    );
 
     baseFiles[1] = { name: "index.ts", content: indexContent };
 
@@ -60,11 +77,9 @@ export async function generate(
       },
     ];
 
-    downloadZip(moduleName, [...baseFiles, ...additionalFiles]);
-  } else {
-    // Download each file individually
-    baseFiles.forEach(({ name, content }) => downloadFile(name, content));
+    return [...baseFiles, ...additionalFiles];
   }
-
   console.log("<==================Generated Successfully==================>");
+
+  return baseFiles;
 }

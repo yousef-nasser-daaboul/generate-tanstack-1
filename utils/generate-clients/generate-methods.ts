@@ -17,7 +17,7 @@ export function generateMethods(methods: MethodDetails[], className: string) {
                 let url_ = this.baseUrl + "${method.url}";
                 url_ = ${method.methodType === MethodType.AddQueryParam ? "addQueryParamsToUrl(url_, body)" : 'url_.replace(/[?&]$/, "")'};
 
-                let options_: AxiosRequestConfig = {
+                const options_: AxiosRequestConfig = {
                     method: "${method.httpMethod}",
                     url: url_,
                     headers: {
@@ -41,7 +41,7 @@ export function generateMethods(methods: MethodDetails[], className: string) {
 
                 const content_ = ${method.methodType === MethodType.FormData ? "objectToFormData" : "JSON.stringify"}(body);
 
-                let options_: AxiosRequestConfig = {
+                const options_: AxiosRequestConfig = {
                     data: content_,
                     method: "${method.httpMethod}",
                     url: url_,

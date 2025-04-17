@@ -11,21 +11,15 @@ interface DropdownProps {
 
 const props = defineProps<DropdownProps>();
 
-const selected = ref();
 </script>
 
 <template>
   <UDropdown
-    @change="
-      (e) => {
-        console.log(e);
-      }
-    "
     :items="[props.items]"
     :popper="{ arrow: true, placement: 'bottom' }"
   >
     <UButton
-      color="white"
+      color="primary"
       class="w-48 flex justify-between"
       :label="props.label"
       trailing-icon="i-heroicons-chevron-down-20-solid"

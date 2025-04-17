@@ -13,7 +13,9 @@ import {
 
 export function generateMutateQueries(
   astObj: ClassDetails[],
-  clientName: string
+  clientName: string,
+  exceptedTypes: string[],
+  replacementTypes: [string, string][]
 ) {
   // Generate Imports
   let content = `import { useMutationBuilder } from "~base/composables/useMutationBuilder"; import {`;
@@ -26,7 +28,12 @@ export function generateMutateQueries(
   }
 
   if (astObj.length > 0) {
-    content += generateMutationsImports(astObj, clientName);
+    content += generateMutationsImports(
+      astObj,
+      clientName,
+      exceptedTypes,
+      replacementTypes
+    );
 
     // Generate Query Keys
     const queryKeysName = `${clientName.split(".")[0].toUpperCase()}_QUERY_KEYS`;
@@ -108,7 +115,12 @@ export function generateClientObj(className: string) {
   return className.charAt(0).toLowerCase() + className.slice(1);
 }
 
-function generateMutationsImports(astObj: ClassDetails[], clientName: string) {
+function generateMutationsImports(
+  astObj: ClassDetails[],
+  clientName: string,
+  exceptedTypes: string[],
+  replacementTypes: [string, string][]
+) {
   let content = "";
   // Start building a unique type set
   const allTypes = new Set<string>();
@@ -121,16 +133,14 @@ function generateMutationsImports(astObj: ClassDetails[], clientName: string) {
         method.params
           .filter(
             (param) =>
-              param.paramType &&
-              ![
-                "undefined",
-                "string | undefined",
-                "number | undefined",
-                "boolean | undefined",
-              ].includes(param.paramType)
+              param.paramType && !exceptedTypes.includes(param.paramType)
           )
           .forEach((param) => {
-            allTypes.add(param.paramType.replace("| undefined", "").trim());
+            const cleanedType = replacementTypes.reduce(
+              (type, [from, to]) => type.replaceAll(from, to),
+              param.paramType
+            );
+            allTypes.add(cleanedType);
           });
       });
   });
@@ -149,7 +159,11 @@ function generateMutationsImports(astObj: ClassDetails[], clientName: string) {
         );
 
         if (bodyParam) {
-          allTypes.add(bodyParam.paramType.replace("| undefined", "").trim());
+          const cleanedType = replacementTypes.reduce(
+            (type, [from, to]) => type.replaceAll(from, to),
+            bodyParam.paramType
+          );
+          allTypes.add(cleanedType);
         } else {
           allTypes.add(
             `I${className}${getFirstLetterUpperCase(methodName)}Dto`

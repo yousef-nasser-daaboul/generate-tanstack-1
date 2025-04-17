@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { downloadModule } from "~/composables/download-module";
 import { generate } from "~/composables/generate";
+import { download } from "~/composables/download";
 
 useHead({
   script: [
@@ -29,6 +30,8 @@ const clients = [
   "SystemSettings",
 ];
 
+const files = ref<{ name: string; content: string }[]>([]);
+
 const selectedClient = ref(clients[0]);
 const downloadLoading = ref(false);
 const generateLoading = ref(false);
@@ -51,7 +54,11 @@ async function startGenerate() {
   generateLoading.value = true;
   const start = performance.now();
 
-  generate(fileContent, selectedClient.value, withTanstack.value);
+  files.value = await generate(
+    fileContent,
+    selectedClient.value,
+    withTanstack.value
+  );
 
   const end = performance.now();
   generateLoading.value = false;
@@ -59,6 +66,19 @@ async function startGenerate() {
 }
 
 const withTanstack = ref(false);
+const copied = ref(false);
+
+const copyToClipboard = async () => {
+  try {
+    const text = files.value[0].content;
+    await navigator.clipboard.writeText(text);
+    console.log("Copied to clipboard:");
+    copied.value = true;
+    setTimeout(() => (copied.value = false), 300);
+  } catch (err) {
+    console.error("Failed to copy: ", err);
+  }
+};
 </script>
 
 <template>
@@ -89,5 +109,38 @@ const withTanstack = ref(false);
       <span v-else>Generate</span>
     </UButton>
     <div v-if="generateTime">Generated In {{ generateTime }} seconds</div>
+
+    <div v-if="generateTime" class="flex flex-col justify-center gap-5">
+      <div class="relative w-full">
+        <UButton
+          class="w-full"
+          icon="ic:baseline-content-copy"
+          color="neutral"
+          variant="outline"
+          :ui="{ base: 'justify-center cursor-pointer', leadingIcon: 'px-3' }"
+          @click="copyToClipboard"
+        >
+          Copy Client To Clipboard
+        </UButton>
+        <div v-if="copied" class="absolute w-full h-full top-0 left-0">
+          <UBadge
+            icon="ic:baseline-content-copy"
+            :ui="{ base: 'justify-center cursor-pointer', leadingIcon: 'px-3' }"
+            class="w-full h-full"
+            >Copied</UBadge
+          >
+        </div>
+      </div>
+      <div class="flex justify-center">Or</div>
+      <UButton
+        trailing-icon="ic:outline-file-download"
+        variant="subtle"
+        size="md"
+        :ui="{ base: 'justify-center cursor-pointer', trailingIcon: 'px-5' }"
+        @click="download(withTanstack, selectedClient, files)"
+      >
+        Download
+      </UButton>
+    </div>
   </div>
 </template>
