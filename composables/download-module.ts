@@ -1,6 +1,13 @@
-export async function downloadModule(module: string) {
+export enum Projects {
+  "Sahab" = "Sahab",
+  "Dinarak" = "Dinarak",
+}
+
+export async function downloadModule(module: string, project: Projects) {
   const response = await fetch(
-    `https://dev.sahabsoft.com/api/Common/ClientCode/GetFile?module=${module}`
+    project === Projects.Sahab
+      ? `https://dev.sahabsoft.com/api/Common/ClientCode/GetFile?module=${module}`
+      : `https://dev-dinarak-app.asasstech.com:443/ClientCode/Get?module=${module}`
   );
 
   if (!response.ok) {

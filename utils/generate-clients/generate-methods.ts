@@ -12,10 +12,10 @@ export function generateMethods(methods: MethodDetails[], className: string) {
       if (method.httpMethod === "GET" || method.httpMethod === "DELETE") {
         return `
             ${method.name}(
-                body${checkIfAllParamsNullable(method.params)}: I${className.replace("Client", "")}${getFirstLetterUpperCase(method.name)}Params
+                ${generateQueryParams(method, className)}
             ): ${method.returnType} {
                 let url_ = this.baseUrl + "${method.url}";
-                url_ = ${method.methodType === MethodType.AddQueryParam ? "addQueryParamsToUrl(url_, body)" : 'url_.replace(/[?&]$/, "")'};
+                url_ = ${method.methodType === MethodType.AddQueryParam ? "addQueryParamsToUrl(url_, params)" : 'url_.replace(/[?&]$/, "")'};
 
                 const options_: AxiosRequestConfig = {
                     method: "${method.httpMethod}",
@@ -75,6 +75,12 @@ function checkIfParamNullable(paramType: string) {
   return paramType.includes("undefined") ? "?" : "";
 }
 
+export function generateQueryParams(method: MethodDetails, className: string) {
+  if (method.params.length === 0) return ``;
+  else
+    return `params${checkIfAllParamsNullable(method.params)}: I${className.replace("Client", "")}${getFirstLetterUpperCase(method.name)}Params`;
+}
+
 export function generateMutateParams(
   params: ParamDetails[],
   methodName: string,
@@ -91,6 +97,17 @@ export function generateMutateParams(
           )
     }: ${params
       .find((param) => param.paramName === "body")
+      ?.paramType?.replace("| undefined", "")}
+          `;
+  } else if (params.find((param) => param.paramName === "dto")) {
+    content += `body${
+      methodType === MethodType.FormData
+        ? ""
+        : checkIfParamNullable(
+            params.find((param) => param.paramName === "dto")?.paramType ?? ""
+          )
+    }: ${params
+      .find((param) => param.paramName === "dto")
       ?.paramType?.replace("| undefined", "")}
           `;
   } else {

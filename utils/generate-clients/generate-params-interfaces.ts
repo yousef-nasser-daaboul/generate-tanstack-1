@@ -7,7 +7,8 @@ export function generateParamsInterfaces(
 ) {
   return methods
     .map((method) => {
-      if (method.httpMethod === "GET" || method.httpMethod === "DELETE") {
+      if (method.params.length === 0) return ``;
+      else if (method.httpMethod === "GET" || method.httpMethod === "DELETE") {
         return `
             export interface I${className.replace("Client", "")}${getFirstLetterUpperCase(method.name)}Params {
                 ${method.params
@@ -22,7 +23,10 @@ export function generateParamsInterfaces(
                   .join(", ")}
             }
         `;
-      } else if (!method.params.some((param) => param.paramName === "body")) {
+      } else if (
+        !method.params.some((param) => param.paramName === "body") &&
+        !method.params.some((param) => param.paramName === "dto")
+      ) {
         return `
             export interface I${className.replace("Client", "")}${getFirstLetterUpperCase(method.name)}Dto {
                 ${method.params

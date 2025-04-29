@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { downloadModule } from "~/composables/download-module";
+import { downloadModule, Projects } from "~/composables/download-module";
 import { generate } from "~/composables/generate";
 import { download } from "~/composables/download";
 
@@ -17,7 +17,7 @@ definePageMeta({
 });
 
 // Clients : Common, Customer, FCExchange, Finance, EntityManagement, Compliance, Utilities, Remittance, Accounting, SystemSettings
-const clients = [
+const sahabClients = [
   "Common",
   "Customer",
   "FCExchange",
@@ -29,20 +29,49 @@ const clients = [
   "Accounting",
   "SystemSettings",
 ];
+const dinarakClients = [
+  "Common",
+  "Customer",
+  "FCExchange",
+  "Finance",
+  "EntityManagement",
+  "Compliance",
+  "Utilities",
+  "Remittance",
+  "Accounting",
+  "SystemSettings",
+  "custom",
+  "Global",
+  "Support",
+];
+
+const projectSelected = ref(Projects.Sahab);
+
+const clients = computed(() => {
+  if (projectSelected.value === Projects.Sahab) {
+    return sahabClients;
+  } else {
+    return dinarakClients;
+  }
+});
 
 const files = ref<{ name: string; content: string }[]>([]);
 
-const selectedClient = ref(clients[0]);
+const selectedClient = ref(clients.value[0]);
 const downloadLoading = ref(false);
 const generateLoading = ref(false);
 const generateTime = ref("");
+const items = ref([Projects.Sahab, Projects.Dinarak]);
 
 async function startGenerate() {
   // Download Module
   downloadLoading.value = true;
   let fileContent = "";
   try {
-    fileContent = await downloadModule(selectedClient.value);
+    fileContent = await downloadModule(
+      selectedClient.value,
+      projectSelected.value
+    );
 
     if (!fileContent) return;
   } catch (e) {
@@ -86,6 +115,15 @@ const copyToClipboard = async () => {
     <h1 class="text-4xl font-bold">Hello World</h1>
 
     <AnimationTitle />
+
+    <URadioGroup
+      v-model="projectSelected"
+      variant="table"
+      orientation="horizontal"
+      indicator="hidden"
+      default-value="System"
+      :items="items"
+    />
     <Select
       v-model="selectedClient"
       class="w-52"
