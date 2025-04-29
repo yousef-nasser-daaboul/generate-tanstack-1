@@ -1,5 +1,6 @@
 import type { MethodDetails } from "../ast/extract-metadata";
 import { getFirstLetterUpperCase } from "../helper/helper";
+import { isMethodMutate } from "./generate-methods";
 
 export function generateParamsInterfaces(
   methods: MethodDetails[],
@@ -8,7 +9,10 @@ export function generateParamsInterfaces(
   return methods
     .map((method) => {
       if (method.params.length === 0) return ``;
-      else if (method.httpMethod === "GET" || method.httpMethod === "DELETE") {
+      else if (
+        method.httpMethod === "GET" ||
+        (method.httpMethod === "DELETE" && !isMethodMutate(method))
+      ) {
         return `
             export interface I${className.replace("Client", "")}${getFirstLetterUpperCase(method.name)}Params {
                 ${method.params
