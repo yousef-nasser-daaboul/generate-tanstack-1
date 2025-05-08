@@ -19,7 +19,7 @@ definePageMeta({
 // Clients : Common, Customer, FCExchange, Finance, EntityManagement, Compliance, Utilities, Remittance, Accounting, SystemSettings
 const sahabClients = [
   "Common",
-  "Compliant",
+  "Complaint",
   "Customer",
   "FCExchange",
   "Finance",
@@ -32,7 +32,7 @@ const sahabClients = [
 ];
 const dinarakClients = [
   "Common",
-  "Compliant",
+  "Complaint",
   "Customer",
   "FCExchange",
   "Finance",
