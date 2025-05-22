@@ -92,7 +92,7 @@ function generateHeaders(method: MethodDetails) {
 }
 export function checkIfAllParamsNullable(params: ParamDetails[]) {
   return params
-    .filter((param) => !["branchIdHeader", "signal"].includes(param.paramName))
+    ?.filter((param) => !["branchIdHeader", "signal"].includes(param.paramName))
     .every((param) => param.paramType.includes("undefined"))
     ? "?"
     : "";
@@ -110,7 +110,7 @@ export function generateQueryParams(method: MethodDetails, className: string) {
 
 export function generateMutateParams(method: MethodDetails, className: string) {
   let content = "";
-  if (method.params.find((param) => param.paramName === "body")) {
+  if (method.params?.find((param) => param.paramName === "body")) {
     content += `body${
       method.methodType === MethodType.FormData
         ? ""
@@ -122,7 +122,7 @@ export function generateMutateParams(method: MethodDetails, className: string) {
       .find((param) => param.paramName === "body")
       ?.paramType?.replace("| undefined", "")}
           `;
-  } else if (method.params.find((param) => param.paramName === "dto")) {
+  } else if (method.params?.find((param) => param.paramName === "dto")) {
     content += `body${
       method.methodType === MethodType.FormData
         ? ""
