@@ -12,7 +12,8 @@ export function generateMethods(methods: MethodDetails[], className: string) {
       if (method.httpMethod === "GET") {
         return `
             ${method.name}(
-                ${generateQueryParams(method, className)}
+                ${generateQueryParams(method, className)},
+                headers?:Record<string,string>
             ): ${method.returnType} {
                 let url_ = this.baseUrl + "${method.url}";
                 url_ = ${method.methodType === MethodType.AddQueryParam ? "addQueryParamsToUrl(url_, params)" : 'url_.replace(/[?&]$/, "")'};
@@ -21,7 +22,8 @@ export function generateMethods(methods: MethodDetails[], className: string) {
                     method: "${method.httpMethod}",
                     url: url_,
                     headers: {
-                      ${generateHeaders(method)}
+                      ${generateHeaders(method)}${generateHeaders(method) ? "," : ""}
+                      ...headers,
                     },
                 };
 
@@ -31,7 +33,8 @@ export function generateMethods(methods: MethodDetails[], className: string) {
       } else if (method.httpMethod === "DELETE") {
         return `
             ${method.name}(
-                ${isMethodMutate(method) ? generateMutateParams(method, className) : generateQueryParams(method, className)}
+                ${isMethodMutate(method) ? generateMutateParams(method, className) : generateQueryParams(method, className)},
+                headers?:Record<string,string>
             ): ${method.returnType} {
                 let url_ = this.baseUrl + "${method.url}";
                 url_ = ${method.methodType === MethodType.AddQueryParam ? "addQueryParamsToUrl(url_, params)" : 'url_.replace(/[?&]$/, "")'};
@@ -47,7 +50,8 @@ export function generateMethods(methods: MethodDetails[], className: string) {
                     method: "${method.httpMethod}",
                     url: url_,
                     headers: {
-                      ${generateHeaders(method)}
+                      ${generateHeaders(method)}${generateHeaders(method) ? "," : ""}
+                      ...headers,
                     },
                 };
 
@@ -57,7 +61,8 @@ export function generateMethods(methods: MethodDetails[], className: string) {
       } else {
         return `
             ${method.name}(
-                ${generateMutateParams(method, className)}
+                ${generateMutateParams(method, className)},
+                headers?:Record<string,string>
             ): ${method.returnType} {
                 let url_ = this.baseUrl + "${method.url}";
                 url_ = url_.replace(/[?&]$/, "");
@@ -69,7 +74,8 @@ export function generateMethods(methods: MethodDetails[], className: string) {
                     method: "${method.httpMethod}",
                     url: url_,
                     headers: {
-                      ${generateHeaders(method)}
+                      ${generateHeaders(method)}${generateHeaders(method) ? "," : ""}
+                      ...headers,
                     },
                 };
 
