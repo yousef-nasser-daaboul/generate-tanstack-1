@@ -18,7 +18,11 @@ export function generateParamsInterfaces(
                 ${method.params
                   .filter(
                     (param) =>
-                      !["branchIdHeader", "signal"].includes(param.paramName)
+                      ![
+                        "branchIdHeader",
+                        "signal",
+                        "X-Idempotence-Key",
+                      ].includes(param.paramName)
                   )
                   .map(
                     (param) =>
@@ -36,7 +40,11 @@ export function generateParamsInterfaces(
                 ${method.params
                   .filter(
                     (param) =>
-                      !["branchIdHeader", "signal"].includes(param.paramName)
+                      ![
+                        "branchIdHeader",
+                        "signal",
+                        "X-Idempotence-Key",
+                      ].includes(param.paramName)
                   )
                   .map(
                     (param) =>

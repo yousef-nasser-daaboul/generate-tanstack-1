@@ -96,6 +96,7 @@ export function extractClassDetails(
               ?.filter(
                 (param) =>
                   param.name.getText(sourceFile) !== "branchIdHeader" &&
+                  param.name.getText(sourceFile) !== "X-Idempotence-Key" &&
                   param.name.getText(sourceFile) !== "signal"
               )
               .map((param) => ({

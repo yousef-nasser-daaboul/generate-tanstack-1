@@ -98,7 +98,12 @@ function generateHeaders(method: MethodDetails) {
 }
 export function checkIfAllParamsNullable(params: ParamDetails[]) {
   return params
-    ?.filter((param) => !["branchIdHeader", "signal"].includes(param.paramName))
+    ?.filter(
+      (param) =>
+        !["branchIdHeader", "signal", "X-Idempotence-Key"].includes(
+          param.paramName
+        )
+    )
     .every((param) => param.paramType.includes("undefined"))
     ? "?"
     : "";
