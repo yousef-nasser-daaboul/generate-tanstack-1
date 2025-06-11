@@ -100,7 +100,7 @@ export function checkIfAllParamsNullable(params: ParamDetails[]) {
   return params
     ?.filter(
       (param) =>
-        !["branchIdHeader", "signal", "X-Idempotence-Key"].includes(
+        !["branchIdHeader", "signal", "x_Idempotence_Key"].includes(
           param.paramName
         )
     )

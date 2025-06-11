@@ -21,7 +21,7 @@ export function generateParamsInterfaces(
                       ![
                         "branchIdHeader",
                         "signal",
-                        "X-Idempotence-Key",
+                        "x_Idempotence_Key",
                       ].includes(param.paramName)
                   )
                   .map(
@@ -43,7 +43,7 @@ export function generateParamsInterfaces(
                       ![
                         "branchIdHeader",
                         "signal",
-                        "X-Idempotence-Key",
+                        "x_Idempotence_Key",
                       ].includes(param.paramName)
                   )
                   .map(
