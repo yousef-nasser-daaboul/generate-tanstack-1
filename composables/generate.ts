@@ -4,7 +4,8 @@ import { generateTanstack } from "~/utils/generate-tanstack";
 export async function generate(
   fileContent: string,
   module: string,
-  withTanstack: boolean
+  withTanstack: boolean,
+  withoutFormatting?: boolean
 ) {
   const exceptClasses = ["ApiException"];
   const exceptedTypes = [
@@ -26,7 +27,9 @@ export async function generate(
   console.log("<==================Complete Generate Client==================>");
 
   const moduleName = module.toLowerCase();
-  const clientContent = await formatContent(content);
+  const clientContent = withoutFormatting
+    ? content
+    : await formatContent(content);
   const baseFiles = [
     { name: `${moduleName}.client.ts`, content: clientContent },
   ];
