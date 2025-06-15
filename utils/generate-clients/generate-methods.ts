@@ -32,23 +32,26 @@ export function generateMethods(methods: MethodDetails[], className: string) {
             }
         `;
       } else if (method.httpMethod === "DELETE") {
+        const isMethodHasBodyOrParams = !!(isMethodMutate(method)
+          ? generateMutateParams(method, className)
+          : generateQueryParams(method, className));
         return `
             ${method.name}(
                 ${isMethodMutate(method) ? generateMutateParams(method, className) : generateQueryParams(method, className)}
-                ${(isMethodMutate(method) ? generateMutateParams(method, className) : generateQueryParams(method, className)) ? "," : ""}
+                ${isMethodHasBodyOrParams ? "," : ""}
                 headers?:Record<string,string>
             ): ${method.returnType} {
                 let url_ = this.baseUrl + "${method.url}";
                 url_ = ${method.methodType === MethodType.AddQueryParam ? "addQueryParamsToUrl(url_, params)" : 'url_.replace(/[?&]$/, "")'};
 
                 ${
-                  isMethodMutate(method)
+                  isMethodMutate(method) && isMethodHasBodyOrParams
                     ? `const content_ = ${method.methodType === MethodType.FormData ? "objectToFormData" : "JSON.stringify"}(body);`
                     : ""
                 }
 
                 const options_: AxiosRequestConfig = {
-                    ${isMethodMutate(method) ? `data: content_,` : ""}
+                    ${isMethodMutate(method) && isMethodHasBodyOrParams ? `data: content_,` : ""}
                     method: "${method.httpMethod}",
                     url: url_,
                     headers: {
@@ -61,18 +64,19 @@ export function generateMethods(methods: MethodDetails[], className: string) {
             }
         `;
       } else {
+        const isMethodHasBody = !!generateMutateParams(method, className);
         return `
             ${method.name}(
-                ${generateMutateParams(method, className)}${generateMutateParams(method, className) ? "," : ""}
+                ${generateMutateParams(method, className)}${isMethodHasBody ? "," : ""}
                 headers?:Record<string,string>
             ): ${method.returnType} {
                 let url_ = this.baseUrl + "${method.url}";
                 url_ = url_.replace(/[?&]$/, "");
 
-                const content_ = ${method.methodType === MethodType.FormData ? "objectToFormData" : "JSON.stringify"}(body);
-
+                ${isMethodHasBody ? `const content_ = ${method.methodType === MethodType.FormData ? "objectToFormData" : "JSON.stringify"}(body);` : ""}
+                
                 const options_: AxiosRequestConfig = {
-                    data: content_,
+                    ${isMethodHasBody ? "data: content_," : ""}
                     method: "${method.httpMethod}",
                     url: url_,
                     headers: {
@@ -123,7 +127,9 @@ export function generateQueryParams(method: MethodDetails, className: string) {
 
 export function generateMutateParams(method: MethodDetails, className: string) {
   let content = "";
-  if (method.params?.find((param) => param.paramName === "body")) {
+  if (method.params.length === 0) {
+    return "";
+  } else if (method.params?.find((param) => param.paramName === "body")) {
     content += `body${
       method.methodType === MethodType.FormData
         ? ""
