@@ -6,29 +6,13 @@ import { generateQueryKeys } from "./generate-query-keys";
 import { generateMutations } from "./generate-mutations";
 import { generateQueries } from "./generate-queries";
 
-export function generateTanstack(
-  fileContent: string,
-  clientName: string,
-  exceptClasses: string[],
-  exceptedTypes: string[],
-  replacementTypes: [string, string][]
-) {
-  const astObj = extractClassDetails(fileContent, exceptClasses);
+export function generateTanstack(fileContent: string, clientName: string) {
+  const astObj = extractClassDetails(fileContent);
 
   const indexContent = generateIndex(astObj, clientName);
   const queryKeysContent = generateQueryKeys(astObj, clientName);
-  const clientQueriesContent = generateClientQueries(
-    astObj,
-    clientName,
-    exceptedTypes,
-    replacementTypes
-  );
-  const mutateQueriesContent = generateMutateQueries(
-    astObj,
-    clientName,
-    exceptedTypes,
-    replacementTypes
-  );
+  const clientQueriesContent = generateClientQueries(astObj, clientName);
+  const mutateQueriesContent = generateMutateQueries(astObj, clientName);
   const mutationsContent = generateMutations(astObj, clientName);
   const queriesContent = generateQueries(astObj, clientName);
 

@@ -1,3 +1,4 @@
+import { exceptedTypes, replacementTypes } from "~/client-config";
 import {
   HttpMethod,
   type ClassDetails,
@@ -13,9 +14,7 @@ import {
 
 export function generateMutateQueries(
   astObj: ClassDetails[],
-  clientName: string,
-  exceptedTypes: string[],
-  replacementTypes: [string, string][]
+  clientName: string
 ) {
   // Generate Imports
   let content = `import { useMutationBuilder } from "~base/composables/useMutationBuilder"; import {`;
@@ -28,12 +27,7 @@ export function generateMutateQueries(
   }
 
   if (astObj.length > 0) {
-    content += generateMutationsImports(
-      astObj,
-      clientName,
-      exceptedTypes,
-      replacementTypes
-    );
+    content += generateMutationsImports(astObj, clientName);
 
     // Generate Query Keys
     const queryKeysName = `${clientName.split(".")[0].toUpperCase()}_QUERY_KEYS`;
@@ -96,12 +90,7 @@ function generateMQueryFunctionParams(
   if (method.params.length === 1) {
     return `${method.params[0].paramName}:${method.params[0].paramType}`;
   }
-  return generateMutateParams(
-    method.params,
-    methodName,
-    className,
-    method.methodType
-  );
+  return generateMutateParams(method, className);
 }
 
 function generateMQueryFnAssignParams(params: ParamDetails[]) {
@@ -115,12 +104,7 @@ export function generateClientObj(className: string) {
   return className.charAt(0).toLowerCase() + className.slice(1);
 }
 
-function generateMutationsImports(
-  astObj: ClassDetails[],
-  clientName: string,
-  exceptedTypes: string[],
-  replacementTypes: [string, string][]
-) {
+function generateMutationsImports(astObj: ClassDetails[], clientName: string) {
   let content = "";
   // Start building a unique type set
   const allTypes = new Set<string>();

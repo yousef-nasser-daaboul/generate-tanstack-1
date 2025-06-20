@@ -1,3 +1,4 @@
+import { exceptedTypes, replacementTypes } from "~/client-config";
 import {
   HttpMethod,
   type ClassDetails,
@@ -10,9 +11,7 @@ import { generateQueryPathValue } from "./generate-query-keys";
 
 export function generateClientQueries(
   astObj: ClassDetails[],
-  clientName: string,
-  exceptedTypes: string[],
-  replacementTypes: [string, string][]
+  clientName: string
 ) {
   // Generate Imports
   let content = `import type { Ref } from "vue"; import { useQueryBuilder } from "~base/composables/useQueryBuilder"; import {`;

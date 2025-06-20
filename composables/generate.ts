@@ -7,23 +7,8 @@ export async function generate(
   withTanstack: boolean,
   withoutFormatting?: boolean
 ) {
-  const exceptClasses = ["ApiException"];
-  const exceptedTypes = [
-    "undefined",
-    "string[] | undefined",
-    "boolean[] | undefined",
-    "number[] | undefined",
-    "string | undefined",
-    "number | undefined",
-    "boolean | undefined",
-  ];
-  const replacementTypes: [string, string][] = [
-    [" | undefined", ""],
-    ["[]", ""],
-  ];
-
   // GenerateClient
-  const content = generateClient(fileContent, exceptClasses);
+  const content = generateClient(fileContent);
   console.log("<==================Complete Generate Client==================>");
 
   const moduleName = module.toLowerCase();
@@ -43,13 +28,7 @@ export async function generate(
       mutationsContent,
       queriesContent,
       queryKeysContent,
-    } = generateTanstack(
-      fileContent,
-      moduleName,
-      exceptClasses,
-      exceptedTypes,
-      replacementTypes
-    );
+    } = generateTanstack(fileContent, moduleName);
 
     baseFiles[1] = { name: "index.ts", content: indexContent };
 

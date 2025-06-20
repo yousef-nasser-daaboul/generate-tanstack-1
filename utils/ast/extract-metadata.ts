@@ -1,3 +1,5 @@
+import { exceptClasses } from "~/client-config";
+
 export interface ParamDetails {
   paramName: string;
   paramType: string;
@@ -58,8 +60,7 @@ export interface EnumDetails {
 }
 
 export function extractClassDetails(
-  fileContent: string,
-  except?: string[]
+  fileContent: string
 ): ClassDetails[] {
   const ts = (window as any).ts;
   const sourceFile = ts.createSourceFile(
@@ -75,7 +76,7 @@ export function extractClassDetails(
       const className = node.name?.text || "";
 
       // Skip if class is in except array
-      if (except?.includes(className)) return;
+      if (exceptClasses?.includes(className)) return;
 
       // console.log(`Found class: ${className}`);
 
@@ -131,6 +132,11 @@ export function extractClassDetails(
 
           // Extract Headers
           const headers = extractHeaders(classNode);
+
+          console.log("==============================");
+          console.log("Method Name ===>", methodName);
+          console.log("headers ===>", headers);
+          console.log("==============================");
           // const headers = [] as Header[];
           // const optionsStatement = classNode.body.statements?.find(
           //   (statement) =>
@@ -176,6 +182,8 @@ function extractHeaders(classNode: any) {
       optionsStatement?.declarationList?.declarations?.[0]?.initializer?.properties?.find(
         (property: any) => property?.name?.text === "headers"
       );
+
+    console.log("headersProperty: ", headersProperty.toString());
 
     if (headersProperty?.initializer?.properties) {
       for (const prop of headersProperty.initializer.properties) {

@@ -1,6 +1,6 @@
+import { paramInterfaceStructure } from "~/client-config";
 import type { MethodDetails } from "../ast/extract-metadata";
-import { getFirstLetterUpperCase } from "../helper/helper";
-import { isMethodMutate } from "./generate-methods";
+import { isApiMutate } from "../helper/helper";
 
 export function generateParamsInterfaces(
   methods: MethodDetails[],
@@ -11,53 +11,55 @@ export function generateParamsInterfaces(
       if (method.params.length === 0) return ``;
       else if (
         method.httpMethod === "GET" ||
-        (method.httpMethod === "DELETE" && !isMethodMutate(method))
+        (method.httpMethod === "DELETE" && !isApiMutate(method))
       ) {
-        return `
-            export interface I${className.replace("Client", "")}${getFirstLetterUpperCase(method.name)}Params {
-                ${method.params
-                  .filter(
-                    (param) =>
-                      ![
-                        "branchIdHeader",
-                        "signal",
-                        "x_Idempotence_Key",
-                      ].includes(param.paramName)
-                  )
-                  .map(
-                    (param) =>
-                      `${param.paramName}${checkIfParamNullable(param.paramType)}: ${param.paramType.replace("| undefined", "")}`
-                  )
-                  .join(", ")}
-            }
-        `;
+        return paramInterfaceStructure(method, className);
+        // return `
+        //     export interface I${className.replace("Client", "")}${getFirstLetterUpperCase(method.name)}Params {
+        //         ${method.params
+        //           .filter(
+        //             (param) =>
+        //               ![
+        //                 "branchIdHeader",
+        //                 "signal",
+        //                 "x_Idempotence_Key",
+        //               ].includes(param.paramName)
+        //           )
+        //           .map(
+        //             (param) =>
+        //               `${param.paramName}${checkIfParamNullable(param.paramType)}: ${param.paramType.replace("| undefined", "")}`
+        //           )
+        //           .join(", ")}
+        //     }
+        // `;
       } else if (
         !method.params.some((param) => param.paramName === "body") &&
         !method.params.some((param) => param.paramName === "dto")
       ) {
-        return `
-            export interface I${className.replace("Client", "")}${getFirstLetterUpperCase(method.name)}Dto {
-                ${method.params
-                  .filter(
-                    (param) =>
-                      ![
-                        "branchIdHeader",
-                        "signal",
-                        "x_Idempotence_Key",
-                      ].includes(param.paramName)
-                  )
-                  .map(
-                    (param) =>
-                      `${param.paramName}${checkIfParamNullable(param.paramType)}: ${param.paramType.replace("| undefined", "")}`
-                  )
-                  .join(", ")}
-            }
-        `;
+        return paramInterfaceStructure(method, className);
+        // return `
+        //     export interface I${className.replace("Client", "")}${getFirstLetterUpperCase(method.name)}Dto {
+        //         ${method.params
+        //           .filter(
+        //             (param) =>
+        //               ![
+        //                 "branchIdHeader",
+        //                 "signal",
+        //                 "x_Idempotence_Key",
+        //               ].includes(param.paramName)
+        //           )
+        //           .map(
+        //             (param) =>
+        //               `${param.paramName}${checkIfParamNullable(param.paramType)}: ${param.paramType.replace("| undefined", "")}`
+        //           )
+        //           .join(", ")}
+        //     }
+        // `;
       }
     })
     .join("\n");
 }
 
-function checkIfParamNullable(paramType: string) {
-  return paramType.includes("undefined") ? "?" : "";
-}
+// function checkIfParamNullable(paramType: string) {
+//   return paramType.includes("undefined") ? "?" : "";
+// }

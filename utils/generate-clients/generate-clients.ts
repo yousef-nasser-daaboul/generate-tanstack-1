@@ -12,11 +12,10 @@ import { generateClasses } from "./generate-classes";
 
 export function generateClient(
   fileContent: string,
-  exceptClasses: string[]
 ): string {
   let content = clientStartGenerated;
 
-  const classes = extractClassDetails(fileContent, exceptClasses);
+  const classes = extractClassDetails(fileContent);
   content += generateClasses(classes);
 
   const interfaces = extractInterfaceDetails(fileContent);
