@@ -131,7 +131,6 @@ const copyToClipboard = async () => {
       </UButton>
     </div>
     <div class="flex flex-col h-full justify-center gap-5">
-      ==={{ module }}===
       <h1 class="text-4xl font-bold">Hello World</h1>
       <AnimationTitle />
       <Select

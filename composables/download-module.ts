@@ -8,7 +8,9 @@ export async function downloadModule(module: string, project: Projects) {
   const response = await fetch(
     project === Projects.Sahab
       ? `https://dev.sahabsoft.com/api/Common/ClientCode/GetFile?module=${module}`
-      : `https://dev-dinarak-app.asasstech.com:443/ClientCode/Get?module=${module}`
+      : project === Projects.Dinarak
+        ? `https://dev-dinarak-app.asasstech.com:443/ClientCode/Get?module=${module}`
+        : `https://dev-masar.asasstech.com:443/api/Shared/clientcode/GetFile?module=${module}`
   );
 
   if (!response.ok) {
