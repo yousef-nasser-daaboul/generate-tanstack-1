@@ -1,6 +1,7 @@
 export enum Projects {
-  "Sahab" = "Sahab",
-  "Dinarak" = "Dinarak",
+  "Sahab" = "sahab",
+  "Dinarak" = "dinarak",
+  "Masar" = "masar",
 }
 
 export async function downloadModule(module: string, project: Projects) {

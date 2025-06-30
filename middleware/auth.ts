@@ -15,6 +15,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       return navigateTo("/login");
     }
 
+    useState("module", () => (data.value as any)?.module);
     // Token is valid
   } else {
     // No token, redirect to login

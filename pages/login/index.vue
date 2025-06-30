@@ -23,7 +23,10 @@ async function login() {
 
     if (data.token) {
       localStorage.setItem("token", data.token);
-      navigateTo("/");
+      console.log(data.module);
+      useState("module", () => data.module);
+      location.replace("/");
+      // return navigateTo("/");
     }
   } catch (error) {
     console.error("Login error:", error);
