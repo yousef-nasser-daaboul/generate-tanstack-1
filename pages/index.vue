@@ -130,9 +130,20 @@ const copyToClipboard = async () => {
         < Logout
       </UButton>
     </div>
-    <div class="flex flex-col h-full justify-center gap-5">
-      <h1 class="text-4xl font-bold">Hello World</h1>
+    <h2 class="text-2xl font-semibold">
+      Your Currently in
+      <span class="text-green-500 font-bold text-3xl">
+        {{ module?.toUpperCase() }}
+      </span>
+    </h2>
+    <span class="text-gray-500 text-sm italic">
+      If you want to change project => logout!
+    </span>
+    <div class="w-full px-96 mt-10">
       <AnimationTitle />
+    </div>
+    <div class="flex flex-col h-full mt-10 gap-5">
+      <h1 class="text-4xl font-bold">Hello World</h1>
       <Select
         v-model="selectedClient"
         class="w-52"

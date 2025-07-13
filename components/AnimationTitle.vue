@@ -7,19 +7,23 @@ const erasingSpeed = ref(200);
 const newTextDelay = ref(2000);
 const typeStatus = ref(false);
 const typeArray = ref([
-  "Free Syria",
-  "Long live Syria",
-  "Down with Assad",
-  "Hope never dies",
-  "Freedom for all",
-  "Power to the people",
-  "Justice for Syria",
-  "Syria will rise again",
-  "The truth is louder",
-  "May God protect Syria",
-  "May God grant victory to Syria",
-  "May God bless Syria with peace",
-  "May God grant freedom to Syria",
+  `"It works on my machine." – The developer's national anthem.`,
+  `"Just gonna write a quick loop..." – Famous last words before crashing the system.`,
+  `"[] == ![] // true" – JavaScript is not a bug, it's a feature.`,
+  `"Why is this not working?" → "Oh." → "Wait, why *is* this working?" – The debugging cycle.`,
+  `"fix bug", "fix real bug", "fix actual real bug", "final fix", "please work" – Git commit history in a nutshell.`,
+  `"Me: I'll refactor this later" – *Codebase, 5 years later: a haunted mess*`,
+  `"1% writing code, 99% Stack Overflow"`,
+
+  `"Interview question: 'What is your experience with React?' – Me: 'I watched a YouTube tutorial last night.'"`,
+
+  `"// Don’t touch this. I don’t know how it works but it does." – Legacy code comment`,
+
+  `"Dark mode is not a preference. It's a lifestyle."`,
+
+  `"Normal people on weekends: party, movies, beach. Me: npm run dev"`,
+
+  `"Programming is 90% figuring out why it doesn’t work and 10% swearing it should work."`,
 ]);
 
 function typeText() {
