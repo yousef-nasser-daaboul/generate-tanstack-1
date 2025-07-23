@@ -10,7 +10,7 @@ export async function downloadModule(module: string, project: Projects) {
       ? `https://dev.sahabsoft.com/api/Common/ClientCode/GetFile?module=${module}`
       : project === Projects.Dinarak
         ? `https://dev-dinarak-app.asasstech.com:443/ClientCode/Get?module=${module}`
-        : `https://dev-masar.asasstech.com:443/api/Shared/clientcode/GetFile?module=${module}`
+        : `https://dev-masar.asasstech.com:443/api/Shared/ClientCode/Generate?module=${module}`
   );
 
   if (!response.ok) {
