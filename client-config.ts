@@ -27,6 +27,7 @@ export const exceptedTypes = [
   "string | undefined",
   "number | undefined",
   "boolean | undefined",
+  "AcceptLanguage",
 ];
 export const replacementTypes: [string, string][] = [
   [" | undefined", ""],
@@ -38,6 +39,7 @@ export const mutateParamsDtoNames = ["body", "dto"];
 export const exceptedParameters = [
   "branchIdHeader",
   "signal",
+  "accept_Language",
   "x_Idempotence_Key",
 ];
 
