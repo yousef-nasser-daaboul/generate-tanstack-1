@@ -1,5 +1,4 @@
 import { createHash } from "crypto";
-import { modules } from "./modules";
 
 export default defineEventHandler(async (event) => {
   // Get the token from the Authorization header
@@ -12,17 +11,12 @@ export default defineEventHandler(async (event) => {
 
   const token = authorization.split(" ")[1];
 
-  const expectedTokens = modules.map((m) =>
-    createHash("sha256").update(m).digest("hex")
-  );
+  const expectedToken = createHash("sha256").update("fikratech").digest("hex");
 
-  const index = expectedTokens.indexOf(token);
-
-  if (index !== -1) {
+  if (token === expectedToken) {
     return {
       success: true,
       message: "Token is valid",
-      module: modules[index],
     };
   } else {
     return { success: false, message: "Invalid token" };

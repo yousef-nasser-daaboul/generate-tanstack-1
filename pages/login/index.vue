@@ -38,9 +38,11 @@ async function login() {
 </script>
 
 <template>
-  <div @keydown.enter="login">
-    <h1 class="mt-40 text-4xl font-bold">Welcome To Generate Tanstack</h1>
-    <div class="flex justify-center w-full h-full items-center -mt-50">
+  <div @keydown.enter="login" class="flex flex-col justify-center w-full">
+    <h1 class="mt-40 text-4xl font-bold text-center">
+      Welcome To Generate Tanstack
+    </h1>
+    <div class="flex justify-center w-full h-full items-center mt-20">
       <div class="flex flex-col gap-5">
         <TextInputField
           v-model:value="password"

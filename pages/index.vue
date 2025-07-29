@@ -16,7 +16,7 @@ definePageMeta({
   middleware: "auth",
 });
 
-const module = useState<Projects>("module");
+// const module = useState<Projects>("module");
 
 // Clients : Common, Customer, FCExchange, Finance, EntityManagement, Compliance, Utilities, Remittance, Accounting, SystemSettings
 
@@ -75,10 +75,22 @@ enum generateType {
   Select = "Select",
   Upload = "Upload",
 }
+const selectedProject = ref<Projects>(
+  (localStorage.getItem("current_project") as Projects) ?? Projects.Sahab
+);
+const selectedClient = ref(clients[selectedProject.value][0]);
+
+watch(
+  () => selectedProject.value,
+  () => {
+    selectedClient.value = clients[selectedProject.value][0];
+    // Store Client
+    localStorage.setItem("current_project", selectedProject.value);
+  }
+);
 
 const files = ref<{ name: string; content: string }[]>([]);
 
-const selectedClient = ref(clients[module.value][0]);
 const downloadLoading = ref(false);
 const generateLoading = ref(false);
 const generateTime = ref("");
@@ -100,7 +112,10 @@ async function downloadFile() {
   downloadLoading.value = true;
   let fileContent = "";
   try {
-    fileContent = await downloadModule(selectedClient.value, module.value);
+    fileContent = await downloadModule(
+      selectedClient.value,
+      selectedProject.value
+    );
 
     if (!fileContent) return;
   } catch (e) {
@@ -151,15 +166,8 @@ watch(uploadFileModel, handleFileChange);
 
 <template>
   <div class="grid grid-cols-12 h-screen">
-    <!-- <div class="col-span-3">
-      <div class="card">
-        
-      </div>
-    </div> -->
-    <div
-      class="col-span-12 w-full items-center flex flex-col justify-between gap-5"
-    >
-      <div class="px-10 mt-10 w-full flex justify-end">
+    <div class="col-span-12 w-full items-center flex flex-col gap-5">
+      <!-- <div class="px-10 mt-10 w-full flex justify-end">
         <UButton class="w-fit" color="info" block @click="navigateTo('/login')">
           < Logout
         </UButton>
@@ -172,12 +180,18 @@ watch(uploadFileModel, handleFileChange);
       </h2>
       <span class="text-gray-500 text-sm italic">
         If you want to change project => logout!
-      </span>
-      <div class="w-full px-96 mt-10">
+      </span> -->
+      <!-- <div class="w-full px-96 mt-10">
         <AnimationTitle />
-      </div>
-      <div class="flex flex-col h-full mt-10 gap-5">
+      </div> -->
+      <div class="flex flex-col h-full mt-10 gap-5 justify-center ">
         <h1 class="text-4xl font-bold">Hello World</h1>
+        <Select
+          v-model="selectedProject"
+          class="w-52"
+          :items="Object.values(Projects)"
+          label="Select Project"
+        />
         <URadioGroup
           v-model="generateTypeModel"
           orientation="horizontal"
@@ -188,7 +202,7 @@ watch(uploadFileModel, handleFileChange);
           v-if="generateTypeModel === generateType.Select"
           v-model="selectedClient"
           class="w-52"
-          :items="clients[module]"
+          :items="clients[selectedProject]"
           label="Select Module"
         />
         <UFileUpload
