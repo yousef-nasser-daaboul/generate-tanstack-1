@@ -34,6 +34,11 @@ export const replacementTypes: [string, string][] = [
   ["[]", ""],
 ];
 
+export const replacementPropertiesTypes: [string, string][] = [
+  ["(number | null)[]", "number[]"],
+  ["| undefined", ""],
+];
+
 export const mutateParamsDtoNames = ["body", "dto"];
 
 export const exceptedParameters = [
@@ -117,11 +122,18 @@ export function paramInterfaceStructure(
               .filter((param) => !exceptedParameters.includes(param.paramName))
               .map(
                 (param) =>
-                  `${param.paramName}${checkIfParamNullable(param.paramType)}: ${param.paramType.replace("| undefined", "")}`
+                  `${param.paramName}${checkIfParamNullable(param.paramType)}: ${getInterfaceProperty(param.paramType)}`
               )
               .join(", ")}
         }
     `;
+}
+
+function getInterfaceProperty(paramType: string) {
+  for (const [target, replacement] of replacementPropertiesTypes) {
+    paramType = paramType.replaceAll(target, replacement);
+  }
+  return paramType;
 }
 
 export function interfaceStructure(interfaceInfo: InterfaceDetails) {

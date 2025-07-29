@@ -56,11 +56,19 @@ const masarClients = [
   "FileManagement",
   "SystemSettings",
 ];
+const bayanClients = [
+  "Employee",
+  "Shared",
+  "EntityManagement",
+  "FileManagement",
+  "SystemSettings",
+];
 
 const clients = {
   [Projects.Sahab]: sahabClients,
   [Projects.Dinarak]: dinarakClients,
   [Projects.Masar]: masarClients,
+  [Projects.Bayan]: bayanClients,
 };
 // const projectSelected = ref(Projects.Sahab);
 

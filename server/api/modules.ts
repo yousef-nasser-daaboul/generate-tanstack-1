@@ -1,1 +1,1 @@
-export const modules = ["sahab", "dinarak", "masar"];
+export const modules = ["sahab", "dinarak", "masar", "bayan"];
