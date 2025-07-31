@@ -51,6 +51,7 @@ const dinarakClients = [
 ];
 const masarClients = [
   "Vehicle",
+  "Pricing",
   "Shared",
   "EntityManagement",
   "FileManagement",
@@ -184,7 +185,7 @@ watch(uploadFileModel, handleFileChange);
       <!-- <div class="w-full px-96 mt-10">
         <AnimationTitle />
       </div> -->
-      <div class="flex flex-col h-full mt-10 gap-5 justify-center ">
+      <div class="flex flex-col h-full mt-10 gap-5 justify-center">
         <h1 class="text-4xl font-bold">Hello World</h1>
         <Select
           v-model="selectedProject"
