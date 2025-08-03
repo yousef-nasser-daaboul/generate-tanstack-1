@@ -11,15 +11,15 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@nuxt/ui": "3.0.2",
-    "jszip": "^3.10.1",
-    "nuxt": "^3.16.1",
-    "prettier": "^3.5.3",
+    "@nuxt/ui": "latest",
+    "jszip": "latest",
+    "nuxt": "latest",
+    "prettier": "latest",
     "vue": "latest",
     "vue-router": "latest"
   },
   "devDependencies": {
-    "sass-embedded": "^1.86.3",
-    "vue-tsc": "2.2.10"
+    "sass-embedded": "latest",
+    "vue-tsc": "latest"
   }
 }
