@@ -2,6 +2,7 @@
 import { downloadModule, Projects } from "~/composables/download-module";
 import { generate } from "~/composables/generate";
 import { download } from "~/composables/download";
+import FileUpload from "~/components/FileUpload.vue";
 
 useHead({
   script: [
@@ -206,12 +207,7 @@ watch(uploadFileModel, handleFileChange);
           :items="clients[selectedProject]"
           label="Select Module"
         />
-        <UFileUpload
-          v-else
-          v-model="uploadFileModel"
-          accept=".ts"
-          class="w-52 h-24"
-        />
+        <FileUpload v-else v-model="uploadFileModel" />
         <UCheckbox v-model="withTanstack">
           <template #label>
             <div class="text-green-400">With Tanstack</div>
