@@ -85,7 +85,7 @@ export function generateClientQueries(
              useQueryBuilder({
               prefix:"get${className}${methodName}",
               defaultOptions: {
-                queryKey:[${clientNameUpdated}_QUERY_KEYS.${generateQueryPathValue(classDetail, method)},${generateQueryKeyParams(method.params)}],
+                queryKey:[${clientNameUpdated}_QUERY_KEYS.${generateQueryPathValue(classDetail, method)}],
                 queryFn:()=>${generateClientObj(classDetail.className)}.${method.name}(${generateQueryFnAssignParams(method.params)})
               },
             });
