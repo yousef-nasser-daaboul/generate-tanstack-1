@@ -27,16 +27,43 @@ export const exceptedTypes = [
   "string | undefined",
   "number | undefined",
   "boolean | undefined",
+  "string[] | null",
+  "boolean[] | null",
+  "number[] | null",
+  "string | null",
+  "number | null",
+  "boolean | null",
   "AcceptLanguage",
-];
-export const replacementTypes: [string, string][] = [
-  [" | undefined", ""],
-  ["[]", ""],
+  "number",
+  "string",
+  "boolean",
+  "(number)",
+  "(string)",
+  "(boolean)",
 ];
 
-export const replacementPropertiesTypes: [string, string][] = [
-  ["(number | null)[]", "number[]"],
-  ["| undefined", ""],
+export const skipInterfaces: [RegExp] = [/\d+$/];
+
+export const replacementTypes: [RegExp, string][] = [
+  [/ \| undefined/g, ""],
+  [/ \| null/g, ""],
+  [/\[\]/g, ""],
+  [/\d+$/, ""],
+  [/^\(.*\)$/, ""],
+];
+export const replacementInterfacePropertyType: [RegExp, string][] = [
+  [/\s*\d+\s*(?:\|\s*(?:undefined|null))?\s*(?=$|\[\]|\s*[;,\]])/g, ""],
+  [/\s*\d+(?=\s*[;,\]|])|\s*\d+$/g, ""],
+];
+
+export const replacementPropertiesTypes: [RegExp, string][] = [
+  [/\(number \| null\)\[\]/g, "number[]"],
+  [/\| undefined/g, ""],
+  [/(\w*?)(\d+)(?=[\s)|,])/g, "$1"],
+];
+
+export const replacementMethodReturnType: [RegExp, string][] = [
+  [/(\w+?)(\d+)(?=>)/g, "$1"],
 ];
 
 export const mutateParamsDtoNames = ["body", "dto"];
@@ -82,7 +109,7 @@ export function apiStructure(method: MethodDetails, className: string) {
           ${parameters}${!!parameters ? "," : ""}
           headers?:Record<string,string>,
           signal?:AbortSignal
-      ): ${method.returnType} {
+      ): ${getMethodReturnType(method.returnType)} {
           let url_ = this.baseUrl + "${method.url}";
            url_ = ${method.methodType === MethodType.AddQueryParam ? "addQueryParamsToUrl(url_, params)" : 'url_.replace(/[?&]$/, "")'};
 
@@ -131,18 +158,31 @@ export function paramInterfaceStructure(
 
 function getInterfaceProperty(paramType: string) {
   for (const [target, replacement] of replacementPropertiesTypes) {
-    paramType = paramType.replaceAll(target, replacement);
+    paramType = paramType.replace(target, replacement);
   }
   return paramType;
+}
+
+function getMethodReturnType(returnType: string) {
+  console.log("before", returnType);
+  for (const [target, replacement] of replacementMethodReturnType) {
+    returnType = returnType.replace(target, replacement);
+  }
+  console.log("after", returnType);
+  return returnType;
 }
 
 export function interfaceStructure(interfaceInfo: InterfaceDetails) {
   return `export interface ${interfaceInfo.interfaceName} {
         ${interfaceInfo.attributes
-          .map(
-            (attribute) =>
-              `${attribute.isReadonly ? "readonly" : ""} ${attribute.name}${checkIfNullable(attribute.type)}: ${attribute.type.replace(/\|\s*(undefined|null)/g, "")}`
-          )
+          .map((attribute) => {
+            return `${attribute.isReadonly ? "readonly" : ""}
+              ${attribute.name}${checkIfNullable(attribute.type)}:
+              ${replacementInterfacePropertyType.reduce(
+                (type, [pattern, to]) => type.replace(pattern, to),
+                attribute.type
+              )}`;
+          })
           .join(";")}
     }`;
 }

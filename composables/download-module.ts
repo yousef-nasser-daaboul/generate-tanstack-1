@@ -3,6 +3,7 @@ export enum Projects {
   "Dinarak" = "dinarak",
   "Masar" = "masar",
   "Bayan" = "bayan",
+  "AmanPay" = "amanPay",
 }
 
 export async function downloadModule(module: string, project: Projects) {
@@ -13,7 +14,9 @@ export async function downloadModule(module: string, project: Projects) {
         ? `https://dev-dinarak-app.asasstech.com:443/ClientCode/Get?module=${module}`
         : project === Projects.Masar
           ? `https://dev-masar.asasstech.com:443/ClientCode/Generate?module=${module}`
-          : `https://dev-bayan.asasstech.com:443/ClientCode/Generate?module=${module}`
+          : project === Projects.Bayan
+            ? `https://dev-bayan.asasstech.com:443/ClientCode/Generate?module=${module}`
+            : `https://dev-amanpay.asasstech.com:443/ClientCode/Generate?module=${module}`
   );
 
   if (!response.ok) {

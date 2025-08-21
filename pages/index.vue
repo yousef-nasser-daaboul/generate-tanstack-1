@@ -54,6 +54,7 @@ const masarClients = [
   "Vehicle",
   "Pricing",
   "Shared",
+  "Support",
   "EntityManagement",
   "FileManagement",
   "SystemSettings",
@@ -66,12 +67,20 @@ const bayanClients = [
   "FileManagement",
   "SystemSettings",
 ];
+const amanPayClients = [
+  "Wallet",
+  "Support",
+  "EntityManagement",
+  "FileManagement",
+  "SystemSettings",
+];
 
 const clients = {
   [Projects.Sahab]: sahabClients,
   [Projects.Dinarak]: dinarakClients,
   [Projects.Masar]: masarClients,
   [Projects.Bayan]: bayanClients,
+  [Projects.AmanPay]: amanPayClients,
 };
 
 enum generateType {
@@ -99,13 +108,21 @@ const generateLoading = ref(false);
 const generateTime = ref("");
 
 const fileContent = ref();
-const generateTypeModel = ref(generateType.Select);
+const generateTypeModel = ref<generateType | "Text">(generateType.Select);
 const uploadFileModel = ref();
+
+const moduleNameValue = ref();
 
 async function handleGenerateClicked() {
   if (generateTypeModel.value === generateType.Select) {
     downloadFile();
-  } else if (fileContent.value) {
+  } else if (generateTypeModel.value === "Text") {
+    selectedClient.value = moduleNameValue.value;
+    downloadFile();
+  } else if (
+    generateTypeModel.value === generateType.Upload &&
+    fileContent.value
+  ) {
     await generateContent(fileContent.value);
   }
 }
@@ -170,23 +187,6 @@ watch(uploadFileModel, handleFileChange);
 <template>
   <div class="grid grid-cols-12 h-screen">
     <div class="col-span-12 w-full items-center flex flex-col gap-5">
-      <!-- <div class="px-10 mt-10 w-full flex justify-end">
-        <UButton class="w-fit" color="info" block @click="navigateTo('/login')">
-          < Logout
-        </UButton>
-      </div>
-      <h2 class="text-2xl font-semibold">
-        Your Currently in
-        <span class="text-green-500 font-bold text-3xl">
-          {{ module?.toUpperCase() }}
-        </span>
-      </h2>
-      <span class="text-gray-500 text-sm italic">
-        If you want to change project => logout!
-      </span> -->
-      <!-- <div class="w-full px-96 mt-10">
-        <AnimationTitle />
-      </div> -->
       <div class="flex flex-col h-full mt-10 gap-5 justify-center">
         <h1 class="text-4xl font-bold">Hello World</h1>
         <Select
@@ -199,7 +199,7 @@ watch(uploadFileModel, handleFileChange);
           v-model="generateTypeModel"
           orientation="horizontal"
           default-value="Select"
-          :items="[generateType.Select, generateType.Upload]"
+          :items="[generateType.Select, generateType.Upload, 'Text']"
         />
         <Select
           v-if="generateTypeModel === generateType.Select"
@@ -208,7 +208,14 @@ watch(uploadFileModel, handleFileChange);
           :items="clients[selectedProject]"
           label="Select Module"
         />
-        <FileUpload v-else v-model="uploadFileModel" />
+        <FileUpload
+          v-else-if="generateTypeModel === generateType.Upload"
+          v-model="uploadFileModel"
+        />
+        <div v-else class="flex flex-col">
+          <label class="text-primary">Enter Module Name</label>
+          <UInput v-model="moduleNameValue" placeholder="Enter Module Name" />
+        </div>
         <UCheckbox v-model="withTanstack">
           <template #label>
             <div class="text-green-400">With Tanstack</div>
@@ -261,7 +268,7 @@ watch(uploadFileModel, handleFileChange);
               base: 'justify-center cursor-pointer',
               trailingIcon: 'px-5',
             }"
-            @click="download(withTanstack, selectedClient, files)"
+            @click="download(withTanstack, selectedClient, files, false)"
           >
             Download
           </UButton>

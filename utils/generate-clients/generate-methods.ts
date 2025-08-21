@@ -12,103 +12,13 @@ import {
 import { getFirstLetterUpperCase } from "../helper/helper";
 
 export function generateMethods(methods: MethodDetails[], className: string) {
-  //  !method.name.startsWith("process")
   return methods
     .filter((method) => !exceptMethods.includes(method.name))
     .map((method) => {
       return apiStructure(method, className);
-      // if (method.httpMethod === "GET") {
-      //   return apiStructure(method, className);
-      // return `
-      //     ${method.name}(
-      //         ${generateQueryParams(method, className)}
-      //         ${generateQueryParams(method, className) ? "," : ""}
-      //         headers?:Record<string,string>
-      //     ): ${method.returnType} {
-      //         let url_ = this.baseUrl + "${method.url}";
-      //         url_ = ${method.methodType === MethodType.AddQueryParam ? "addQueryParamsToUrl(url_, params)" : 'url_.replace(/[?&]$/, "")'};
-
-      //         const options_: AxiosRequestConfig = {
-      //             method: "${method.httpMethod}",
-      //             url: url_,
-      //             headers: {
-      //               ${generateHeaders(method)}${!!generateHeaders(method) ? "," : ""}
-      //               ...headers,
-      //             },
-      //         };
-
-      //         return this.instance.request(options_).then(process);
-      //     }
-      // `;
-      // } else if (method.httpMethod === "DELETE") {
-      //   return apiStructure(method, className);
-
-      // const isMethodHasBodyOrParams = !!(isMethodMutate(method)
-      //   ? generateMutateParams(method, className)
-      //   : generateQueryParams(method, className));
-      // return `
-      //     ${method.name}(
-      //         ${isMethodMutate(method) ? generateMutateParams(method, className) : generateQueryParams(method, className)}
-      //         ${isMethodHasBodyOrParams ? "," : ""}
-      //         headers?:Record<string,string>
-      //     ): ${method.returnType} {
-      //         let url_ = this.baseUrl + "${method.url}";
-      //         url_ = ${method.methodType === MethodType.AddQueryParam ? "addQueryParamsToUrl(url_, params)" : 'url_.replace(/[?&]$/, "")'};
-
-      //         ${
-      //           isMethodMutate(method) && isMethodHasBodyOrParams
-      //             ? `const content_ = ${method.methodType === MethodType.FormData ? "objectToFormData" : "JSON.stringify"}(body);`
-      //             : ""
-      //         }
-
-      //         const options_: AxiosRequestConfig = {
-      //             ${isMethodMutate(method) && isMethodHasBodyOrParams ? `data: content_,` : ""}
-      //             method: "${method.httpMethod}",
-      //             url: url_,
-      //             headers: {
-      //               ${generateHeaders(method)}${generateHeaders(method) ? "," : ""}
-      //               ...headers,
-      //             },
-      //         };
-
-      //         return this.instance.request(options_).then(process);
-      //     }
-      // `;
-      // } else {
-      //   return apiStructure(method, className);
-      // const isMethodHasBody = !!generateMutateParams(method, className);
-      // return `
-      //     ${method.name}(
-      //         ${generateMutateParams(method, className)}${isMethodHasBody ? "," : ""}
-      //         headers?:Record<string,string>
-      //     ): ${method.returnType} {
-      //         let url_ = this.baseUrl + "${method.url}";
-      //         url_ = url_.replace(/[?&]$/, "");
-
-      //         ${isMethodHasBody ? `const content_ = ${method.methodType === MethodType.FormData ? "objectToFormData" : "JSON.stringify"}(body);` : ""}
-
-      //         const options_: AxiosRequestConfig = {
-      //             ${isMethodHasBody ? "data: content_," : ""}
-      //             method: "${method.httpMethod}",
-      //             url: url_,
-      //             headers: {
-      //               ${generateHeaders(method)}${generateHeaders(method) ? "," : ""}
-      //               ...headers,
-      //             },
-
-      //         };
-
-      //         return this.instance.request(options_).then(process);
-      //     }
-      // `;
-      // }
     })
     .join("\n");
 }
-
-// export function isMethodMutate(method: MethodDetails) {
-//   return !method.url.endsWith("?");
-// }
 
 export function generateHeaders(method: MethodDetails) {
   return method.headers

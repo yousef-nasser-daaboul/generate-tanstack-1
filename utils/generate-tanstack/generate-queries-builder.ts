@@ -36,7 +36,7 @@ export function generateClientQueries(
             )
             .forEach((param) => {
               const cleanedType = replacementTypes.reduce(
-                (type, [from, to]) => type.replaceAll(from, to),
+                (type, [pattern, to]) => type.replace(pattern, to),
                 param.paramType
               );
               paramTypeSet.add(cleanedType);

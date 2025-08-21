@@ -9,10 +9,9 @@ import {
 } from "../helper/client-functions-generated";
 import { generateInterfaces } from "./generate-interfaces";
 import { generateClasses } from "./generate-classes";
+import { skipInterfaces } from "~/client-config";
 
-export function generateClient(
-  fileContent: string,
-): string {
+export function generateClient(fileContent: string): string {
   let content = clientStartGenerated;
 
   const classes = extractClassDetails(fileContent);
@@ -25,7 +24,9 @@ export function generateClient(
   const enums = extractEnumDetails(fileContent);
 
   for (const enumInfo of enums) {
-    content += enumInfo.code;
+    if (!skipInterfaces.some((pattern) => pattern.test(enumInfo.name))) {
+      content += enumInfo.code;
+    }
   }
 
   content += clientFunctionsGenerated;

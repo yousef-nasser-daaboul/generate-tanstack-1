@@ -22,7 +22,6 @@ export function generateMutateQueries(
   // Generate Clients
   if (astObj.length > 0) {
     content += astObj.map((obj) => generateClientObj(obj.className)).join(",");
-    // content += `} from "~mig/utils/${clientName.replace(".", "/")}";`;
     content += `} from ".";`;
   }
 
@@ -31,7 +30,6 @@ export function generateMutateQueries(
 
     // Generate Query Keys
     const queryKeysName = `${clientName.split(".")[0].toUpperCase()}_QUERY_KEYS`;
-    // content += `import {${queryKeysName}} from "~mig/utils/${clientName.replace(".", "/")}/${clientName.split(".")[0]}-query-keys";\n\n`;
     content += `import {${queryKeysName}} from "./${clientName.split(".")[0]}-query-keys";\n\n`;
 
     // Generate Mutate Queries
@@ -121,9 +119,10 @@ function generateMutationsImports(astObj: ClassDetails[], clientName: string) {
           )
           .forEach((param) => {
             const cleanedType = replacementTypes.reduce(
-              (type, [from, to]) => type.replaceAll(from, to),
+              (type, [pattern, to]) => type.replace(pattern, to),
               param.paramType
             );
+
             allTypes.add(cleanedType);
           });
       });
@@ -144,9 +143,10 @@ function generateMutationsImports(astObj: ClassDetails[], clientName: string) {
 
         if (bodyParam) {
           const cleanedType = replacementTypes.reduce(
-            (type, [from, to]) => type.replaceAll(from, to),
+            (type, [pattern, to]) => type.replace(pattern, to),
             bodyParam.paramType
           );
+
           allTypes.add(cleanedType);
         } else {
           allTypes.add(
