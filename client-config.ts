@@ -59,11 +59,12 @@ export const replacementInterfacePropertyType: [RegExp, string][] = [
 export const replacementPropertiesTypes: [RegExp, string][] = [
   [/\(number \| null\)\[\]/g, "number[]"],
   [/\| undefined/g, ""],
+  [/\| null/g, ""],
   [/(\w*?)(\d+)(?=[\s)|,])/g, "$1"],
 ];
 
 export const replacementMethodReturnType: [RegExp, string][] = [
-  [/(\w+?)(\d+)(?=>)/g, "$1"],
+  [/(\w+?)(\d+)(?=(\[\]|>))/g, "$1"],
 ];
 
 export const mutateParamsDtoNames = ["body", "dto"];
