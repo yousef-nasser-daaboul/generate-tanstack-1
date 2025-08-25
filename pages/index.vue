@@ -74,6 +74,12 @@ const amanPayClients = [
   "FileManagement",
   "SystemSettings",
 ];
+const amanPayBusinessClients = [
+  "Wallet",
+  "WalletBusiness",
+  "FileManagement",
+  "SystemSettings",
+];
 
 const clients = {
   [Projects.Sahab]: sahabClients,
@@ -81,6 +87,7 @@ const clients = {
   [Projects.Masar]: masarClients,
   [Projects.Bayan]: bayanClients,
   [Projects.AmanPay]: amanPayClients,
+  [Projects.AmanPayBusiness]: amanPayBusinessClients,
 };
 
 enum generateType {
