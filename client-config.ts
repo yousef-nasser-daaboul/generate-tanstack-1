@@ -53,6 +53,8 @@ export const replacementTypes: [RegExp, string][] = [
 ];
 export const replacementInterfacePropertyType: [RegExp, string][] = [
   [/\s*\d+\s*(?:\|\s*(?:undefined|null))?\s*(?=$|\[\]|\s*[;,\]])/g, ""],
+  [/ \| undefined/g, ""],
+  [/ \| null/g, ""],
   [/\s*\d+(?=\s*[;,\]|])|\s*\d+$/g, ""],
 ];
 
