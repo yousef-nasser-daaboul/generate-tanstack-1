@@ -60,7 +60,7 @@ const masarClients = [
   "SystemSettings",
 ];
 const bayanClients = [
-  "Employee",
+  "EmployeeManagement",
   "LeaveManagement",
   "Shared",
   "EntityManagement",
