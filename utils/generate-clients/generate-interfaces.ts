@@ -14,7 +14,6 @@ export function generateInterfaces(interfaces: InterfaceDetails[]) {
     }
 
     let interfaceContent = interfaceStructure(interfaceInfo);
-    console.log(interfaceContent);
     content += interfaceContent;
   });
   return content;

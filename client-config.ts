@@ -167,11 +167,11 @@ function getInterfaceProperty(paramType: string) {
 }
 
 function getMethodReturnType(returnType: string) {
-  console.log("before", returnType);
+  // console.log("before", returnType);
   for (const [target, replacement] of replacementMethodReturnType) {
     returnType = returnType.replace(target, replacement);
   }
-  console.log("after", returnType);
+  // console.log("after", returnType);
   return returnType;
 }
 
