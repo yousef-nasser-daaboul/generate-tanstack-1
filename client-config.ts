@@ -76,6 +76,7 @@ export const exceptedParameters = [
   "signal",
   "accept_Language",
   "x_Idempotence_Key",
+  "x_AccountWalletId",
 ];
 
 export function classStructure(
@@ -87,12 +88,10 @@ export function classStructure(
       export class ${classInfo.className} {
           protected instance: AxiosInstance;
           protected baseUrl: string;
-          protected transformUrl: (url: string) => string;
 
-          constructor(baseUrl?: string, instance?: AxiosInstance, transformUrl?: (url: string) => string) {
+          constructor(baseUrl?: string, instance?: AxiosInstance) {
               this.instance = instance || axios.create();
               this.baseUrl = baseUrl ?? "";
-              this.transformUrl = transformUrl || ((u) => u);
           }
           
           ${methods}
@@ -117,8 +116,6 @@ export function apiStructure(method: MethodDetails, className: string) {
           let url_ = this.baseUrl + "${method.url}";
            url_ = ${method.methodType === MethodType.AddQueryParam ? "addQueryParamsToUrl(url_, params)" : 'url_.replace(/[?&]$/, "")'};
 
-           url_ = this.transformUrl(url_); 
-           
           ${
             !!parameters && isApiMutate(method)
               ? `const content_ = ${
@@ -182,8 +179,7 @@ export function interfaceStructure(interfaceInfo: InterfaceDetails) {
   return `export interface ${interfaceInfo.interfaceName} {
         ${interfaceInfo.attributes
           .map((attribute) => {
-            return `${attribute.isReadonly ? "readonly" : ""}
-              ${attribute.name}${checkIfNullable(attribute.type)}:
+            return `${attribute.isReadonly ? "readonly" : ""} ${attribute.name}${checkIfNullable(attribute.type)}:
               ${replacementInterfacePropertyType.reduce(
                 (type, [pattern, to]) => type.replace(pattern, to),
                 attribute.type
