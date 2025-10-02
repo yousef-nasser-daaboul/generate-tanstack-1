@@ -14,7 +14,6 @@ export function generateParamsInterfaces(
         )
     )
     .map((method) => {
-      console.log(method.params);
       if (method.params.length === 0) return ``;
       else if (
         method.httpMethod === "GET" ||
