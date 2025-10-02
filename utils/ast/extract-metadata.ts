@@ -133,10 +133,10 @@ export function extractClassDetails(
           // Extract Headers
           const headers = extractHeaders(classNode);
 
-          console.log("==============================");
-          console.log("Method Name ===>", methodName);
-          console.log("headers ===>", headers);
-          console.log("==============================");
+          // console.log("==============================");
+          // console.log("Method Name ===>", methodName);
+          // console.log("headers ===>", headers);
+          // console.log("==============================");
           // const headers = [] as Header[];
           // const optionsStatement = classNode.body.statements?.find(
           //   (statement) =>
