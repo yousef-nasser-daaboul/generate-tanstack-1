@@ -38,7 +38,11 @@ function checkIfParamNullable(paramType: string) {
 }
 
 export function generateQueryParams(method: MethodDetails, className: string) {
-  if (method.params.length === 0) return ``;
+  if (
+    method.params.length === 0 ||
+    method.params.every((param) => exceptedParameters.includes(param.paramName))
+  )
+    return ``;
   else
     return `params${checkIfAllParamsNullable(method.params)}: I${className.replace("Client", "")}${getFirstLetterUpperCase(method.name)}Params`;
 }
@@ -48,7 +52,10 @@ export function generateMutateParams(method: MethodDetails, className: string) {
   const paramMutateName = method.params?.find((param) =>
     mutateParamsDtoNames.includes(param.paramName)
   );
-  if (method.params.length === 0) {
+  if (
+    method.params.length === 0 ||
+    method.params.every((param) => exceptedParameters.includes(param.paramName))
+  ) {
     return "";
   } else if (paramMutateName) {
     content += `body${
