@@ -82,7 +82,7 @@ export const exceptedParameters = [
 export function classStructure(
   classInfo: ClassDetails,
   methods: string,
-  interfaces: string
+  interfaces: string,
 ) {
   return `
       export class ${classInfo.className} {
@@ -111,7 +111,9 @@ export function apiStructure(method: MethodDetails, className: string) {
       ${method.name}(
           ${parameters}${!!parameters ? "," : ""}
           headers?:Record<string,string>,
-          signal?:AbortSignal
+          signal?:AbortSignal,    
+          options?: AxiosRequestConfig,
+          instance?: AxiosInstance,
       ): ${getMethodReturnType(method.returnType)} {
           let url_ = this.baseUrl + "${method.url}";
            url_ = ${method.methodType === MethodType.AddQueryParam ? "addQueryParamsToUrl(url_, params)" : 'url_.replace(/[?&]$/, "")'};
@@ -134,17 +136,20 @@ export function apiStructure(method: MethodDetails, className: string) {
                 ${headers}${!!headers ? "," : ""}
                 ...headers,
               },
-              signal
+              signal,
+              ...options,
           };
 
-          return this.instance.request(options_).then(process);
+           return (instance ? instance : this.instance)
+              .request(options_)
+              .then(process);
       }
   `;
 }
 
 export function paramInterfaceStructure(
   method: MethodDetails,
-  className: string
+  className: string,
 ) {
   return `
         export interface I${className.replace("Client", "")}${getFirstLetterUpperCase(method.name)}${isApiMutate(method) ? "Dto" : "Params"} {
@@ -152,7 +157,7 @@ export function paramInterfaceStructure(
               .filter((param) => !exceptedParameters.includes(param.paramName))
               .map(
                 (param) =>
-                  `${param.paramName}${checkIfParamNullable(param.paramType)}: ${getInterfaceProperty(param.paramType)}`
+                  `${param.paramName}${checkIfParamNullable(param.paramType)}: ${getInterfaceProperty(param.paramType)}`,
               )
               .join(", ")}
         }
@@ -182,7 +187,7 @@ export function interfaceStructure(interfaceInfo: InterfaceDetails) {
             return `${attribute.isReadonly ? "readonly" : ""} ${attribute.name}${checkIfNullable(attribute.type)}:
               ${replacementInterfacePropertyType.reduce(
                 (type, [pattern, to]) => type.replace(pattern, to),
-                attribute.type
+                attribute.type,
               )}`;
           })
           .join(";")}
