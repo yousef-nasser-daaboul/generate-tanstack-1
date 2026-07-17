@@ -26,3 +26,5 @@ logs
 bun.lockb
 
 generate-tanstack-config
+.vercel
+.env*

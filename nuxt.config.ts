@@ -29,4 +29,9 @@ export default defineNuxtConfig({
       appVersion,
     },
   },
+  nitro: {
+    externals: {
+      inline: ["vue"],
+    },
+  },
 });
