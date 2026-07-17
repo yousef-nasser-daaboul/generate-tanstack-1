@@ -171,6 +171,8 @@ async function generateContent(fileContent: string) {
 
 const withTanstack = ref(false);
 const copied = ref(false);
+const runtimeConfig = useRuntimeConfig();
+const appVersion = computed(() => runtimeConfig.public.appVersion || "dev");
 
 const copyToClipboard = async () => {
   try {
@@ -195,7 +197,10 @@ watch(uploadFileModel, handleFileChange);
   <div class="grid grid-cols-12 h-screen">
     <div class="col-span-12 w-full items-center flex flex-col gap-5">
       <div class="flex flex-col h-full mt-10 gap-5 justify-center">
-        <h1 class="text-4xl font-bold">Hello World</h1>
+        <div class="flex flex-col items-center gap-2">
+          <h1 class="text-4xl font-bold">Hello World</h1>
+          <span class="text-sm text-gray-500">Version: {{ appVersion }}</span>
+        </div>
         <Select
           v-model="selectedProject"
           class="w-52"
