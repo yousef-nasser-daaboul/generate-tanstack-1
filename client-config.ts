@@ -114,7 +114,7 @@ export function apiStructure(method: MethodDetails, className: string) {
           signal?:AbortSignal,    
           options?: AxiosRequestConfig,
           instance?: AxiosInstance,
-          customProcess?: (response: AxiosResponse<any, any, {}>): Promise<any>,
+          customProcess?: (response: AxiosResponse<any, any, {}>)=> Promise<any>,
       ): ${getMethodReturnType(method.returnType)} {
           let url_ = this.baseUrl + "${method.url}";
            url_ = ${method.methodType === MethodType.AddQueryParam ? "addQueryParamsToUrl(url_, params)" : 'url_.replace(/[?&]$/, "")'};
