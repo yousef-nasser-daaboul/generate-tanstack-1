@@ -1,5 +1,54 @@
 export const clientFunctionsGenerated = `
-function process(response: AxiosResponse) {
+export interface CustomConfig {
+    headers?: Record<string, string>;
+    signal?: AbortSignal;
+    options?: AxiosRequestConfig;
+    instance?: AxiosInstance;
+    customProcess?: (response: AxiosResponse) => Promise<any>;
+  }
+
+  export class ApiClientBase {
+    protected _instance: AxiosInstance;
+    protected _baseUrl: string;
+
+    constructor(baseUrl?: string, instance?: AxiosInstance) {
+      this._instance = instance || axios.create();
+      this._baseUrl = baseUrl ?? "";
+    }
+
+    protected _handler(
+      url: string,
+      method: string,
+      params: any,
+      config: CustomConfig | undefined,
+      mode: "query" | "json" | "formData" | "replace",
+    ): Promise<any> {
+      let url_ = this._baseUrl + url;
+      url_ = mode === "query" ? addQueryParamsToUrl(url_, params) : url_.replace(/[?&]$/, "");
+
+      const content_ =
+        mode === "json" ? JSON.stringify(params) : mode === "formData" ? objectToFormData(params) : undefined;
+
+      const options_: AxiosRequestConfig = {
+        headers: {
+          Accept: "application/json",
+          ...(mode === "json" ? { "Content-Type": "application/json" } : {}),
+          ...config?.headers,
+        },
+        signal: config?.signal,
+        ...(content_ !== undefined ? { data: content_ } : {}),
+        ...config?.options,
+        method,
+        url: url_,
+      };
+
+      return (config?.instance ? config.instance : this._instance)
+        .request(options_)
+        .then(config?.customProcess ? config.customProcess : process);
+    }
+  }
+
+  function process(response: AxiosResponse) {
     try {
       const res = JSON.parse(response.data);
       return Promise.resolve(res);

@@ -5,7 +5,6 @@ import {
   type MethodDetails,
 } from "./utils/ast/extract-metadata";
 import {
-  generateHeaders,
   generateMutateParams,
   generateQueryParams,
 } from "./utils/generate-clients/generate-methods";
@@ -79,21 +78,33 @@ export const exceptedParameters = [
   "x_AccountWalletId",
 ];
 
+// `extract-metadata.ts` imports from this file (for `exceptClasses`), and this
+// file imports `MethodType` from `extract-metadata.ts` — that circular import
+// means `MethodType` isn't safe to read at module-top-level (it can still be
+// undefined while the cycle is resolving), only from inside a function body
+// that runs later, once both modules have finished initializing.
+function methodTypeToMode(
+  methodType: MethodType,
+): "query" | "json" | "formData" | "replace" {
+  switch (methodType) {
+    case MethodType.AddQueryParam:
+      return "query";
+    case MethodType.Json:
+      return "json";
+    case MethodType.FormData:
+      return "formData";
+    case MethodType.Replace:
+      return "replace";
+  }
+}
+
 export function classStructure(
   classInfo: ClassDetails,
   methods: string,
   interfaces: string,
 ) {
   return `
-      export class ${classInfo.className} {
-          protected instance: AxiosInstance;
-          protected baseUrl: string;
-
-          constructor(baseUrl?: string, instance?: AxiosInstance) {
-              this.instance = instance || axios.create();
-              this.baseUrl = baseUrl ?? "";
-          }
-          
+      export class ${classInfo.className} extends ApiClientBase {
           ${methods}
       }
       ${interfaces}
@@ -105,45 +116,15 @@ export function apiStructure(method: MethodDetails, className: string) {
   const parameters = isMutate
     ? generateMutateParams(method, className)
     : generateQueryParams(method, className);
-  const headers = generateHeaders(method);
+  const paramArg = !!parameters ? (isMutate ? "body" : "params") : "undefined";
+  const mode = methodTypeToMode(method.methodType);
 
   return `
       ${method.name}(
           ${parameters}${!!parameters ? "," : ""}
-          headers?:Record<string,string>,
-          signal?:AbortSignal,    
-          options?: AxiosRequestConfig,
-          instance?: AxiosInstance,
-          customProcess?: (response: AxiosResponse<any, any, {}>)=> Promise<any>,
+          config?: CustomConfig,
       ): ${getMethodReturnType(method.returnType)} {
-          let url_ = this.baseUrl + "${method.url}";
-           url_ = ${method.methodType === MethodType.AddQueryParam ? "addQueryParamsToUrl(url_, params)" : 'url_.replace(/[?&]$/, "")'};
-
-          ${
-            !!parameters && isApiMutate(method)
-              ? `const content_ = ${
-                  method.methodType === MethodType.FormData
-                    ? "objectToFormData"
-                    : "JSON.stringify"
-                }(body);`
-              : ""
-          }
-          
-          const options_: AxiosRequestConfig = {
-              ${!!parameters && isMutate ? "data: content_," : ""}
-              method: "${method.httpMethod}",
-              url: url_,
-              headers: {
-                ${headers}${!!headers ? "," : ""}
-                ...headers,
-              },
-              signal,
-              ...options,
-          };
-
-           return (instance ? instance : this.instance)
-              .request(options_)
-              .then(customProcess ? customProcess : process);
+          return this._handler("${method.url}", "${method.httpMethod}", ${paramArg}, config, "${mode}");
       }
   `;
 }

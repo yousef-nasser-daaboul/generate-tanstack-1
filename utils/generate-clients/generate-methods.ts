@@ -20,11 +20,6 @@ export function generateMethods(methods: MethodDetails[], className: string) {
     .join("\n");
 }
 
-export function generateHeaders(method: MethodDetails) {
-  return method.headers
-    .map((header) => `"${header.key}":"${header.value}"`)
-    .join(",");
-}
 export function checkIfAllParamsNullable(params: ParamDetails[]) {
   return params
     ?.filter((param) => !exceptedParameters.includes(param.paramName))

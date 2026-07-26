@@ -21,11 +21,6 @@ export enum MethodType {
   AddQueryParam,
 }
 
-export interface Header {
-  key: string;
-  value: string;
-}
-
 export interface MethodDetails {
   name: string;
   params: ParamDetails[];
@@ -33,7 +28,6 @@ export interface MethodDetails {
   httpMethod: HttpMethod;
   url: string;
   methodType: MethodType;
-  headers: Header[];
 }
 
 export interface ClassDetails {
@@ -130,27 +124,6 @@ export function extractClassDetails(
           // Detect MethodType
           const methodType = detectMethodType(classNode, httpMethod);
 
-          // Extract Headers
-          const headers = extractHeaders(classNode);
-
-          // console.log("==============================");
-          // console.log("Method Name ===>", methodName);
-          // console.log("headers ===>", headers);
-          // console.log("==============================");
-          // const headers = [] as Header[];
-          // const optionsStatement = classNode.body.statements?.find(
-          //   (statement) =>
-          //     statement?.declarationList?.declarations?.[0]?.name?.text ===
-          //     "options_"
-          // );
-
-          // const headersStatement =
-          //   optionsStatement?.declarationList?.declarations?.[0]?.initializer?.properties?.find(
-          //     (property) => property?.name?.text === "headers"
-          //   );
-
-          // console.log("headersStatement  ===>", headersStatement);
-
           methods.push({
             name: methodName,
             params,
@@ -158,7 +131,6 @@ export function extractClassDetails(
             httpMethod,
             methodType,
             url,
-            headers,
           });
         }
       });
@@ -168,37 +140,6 @@ export function extractClassDetails(
   });
 
   return classes;
-}
-
-function extractHeaders(classNode: any) {
-  const headers: Header[] = [];
-  try {
-    const optionsStatement = classNode.body?.statements?.find(
-      (statement: any) =>
-        statement?.declarationList?.declarations?.[0]?.name?.text === "options_"
-    );
-
-    const headersProperty =
-      optionsStatement?.declarationList?.declarations?.[0]?.initializer?.properties?.find(
-        (property: any) => property?.name?.text === "headers"
-      );
-
-    console.log("headersProperty: ", headersProperty.toString());
-
-    if (headersProperty?.initializer?.properties) {
-      for (const prop of headersProperty.initializer.properties) {
-        if (prop.initializer?.text) {
-          headers.push({
-            key: prop.name?.text,
-            value: prop.initializer?.text,
-          });
-        }
-      }
-    }
-  } catch (e) {
-    console.warn("Header extraction failed:", e);
-  }
-  return headers;
 }
 
 function detectMethodType(classNode: any, httpMethod: HttpMethod) {
