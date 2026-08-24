@@ -143,7 +143,7 @@ export function extractClassDetails(
 }
 
 function detectMethodType(classNode: any, httpMethod: HttpMethod) {
-  let methodType = MethodType.FormData;
+  let methodType = MethodType.Json;
   try {
     // A method can build its URL via query params or a path `.replace()`
     // *and still* send a real request body (e.g. a bulk DELETE with a
@@ -164,7 +164,11 @@ function detectMethodType(classNode: any, httpMethod: HttpMethod) {
         initializer?.expression?.name?.text === "stringify"
           ? MethodType.Json
           : MethodType.FormData;
-    } else if (httpMethod === "GET" || httpMethod === "DELETE") {
+    } else {
+      // No request body at all - this verb-agnostic pattern (e.g. a PUT
+      // that only needs an id in the URL, like UnlockUser) is the same
+      // shape NSwag emits for GET/DELETE query builders, so check it for
+      // every verb instead of only GET/DELETE.
       const secondStatement = classNode.body?.statements?.[1];
       if (secondStatement && "elseStatement" in secondStatement) {
         methodType = MethodType.AddQueryParam;
