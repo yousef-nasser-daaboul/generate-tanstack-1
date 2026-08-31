@@ -146,7 +146,13 @@ async function downloadFile() {
 
     if (!fileContent) return;
   } catch (e) {
-    console.error("Error Network");
+    downloadLoading.value = false;
+    toast.add({
+      title: "Failed to download module",
+      description: e instanceof Error ? e.message : "Unknown error",
+      color: "error",
+    });
+    return;
   }
   downloadLoading.value = false;
 
@@ -171,6 +177,7 @@ async function generateContent(fileContent: string) {
 
 const withTanstack = ref(false);
 const copied = ref(false);
+const toast = useToast();
 const runtimeConfig = useRuntimeConfig();
 const appVersion = computed(() => runtimeConfig.public.appVersion || "dev");
 

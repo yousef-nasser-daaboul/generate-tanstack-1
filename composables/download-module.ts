@@ -14,7 +14,7 @@ export async function downloadModule(module: string, project: Projects) {
       : project === Projects.Dinarak
         ? `https://dev-dinarak.asasstech.com:443/api/Global/ClientCode/Get?module=${module}`
         : project === Projects.Masar
-          ? `https://dev-masar.asasstech.com:443/ClientCode/Generate?module=${module}`
+          ? `https://dev.masarcars.com/ClientCode/Generate?module=${module}`
           : project === Projects.Bayan
             ? `https://dev-bayan.asasstech.com:443/ClientCode/Generate?module=${module}`
             : project === Projects.AmanPay
@@ -23,7 +23,10 @@ export async function downloadModule(module: string, project: Projects) {
   );
 
   if (!response.ok) {
-    throw new Error(`Failed to download module: ${response.statusText}`);
+    const body = await response.text().catch(() => "");
+    throw new Error(
+      body || `Failed to download module: ${response.statusText}`
+    );
   }
   return await response.text(); // Use .json() or .blob() if needed
 }
