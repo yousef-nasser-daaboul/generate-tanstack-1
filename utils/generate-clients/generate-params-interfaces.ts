@@ -1,4 +1,4 @@
-import { exceptedParameters, paramInterfaceStructure } from "~/client-config";
+import { exceptedParameters, paramInterfaceStructure } from "../../client-config";
 import type { MethodDetails } from "../ast/extract-metadata";
 import { isApiMutate } from "../helper/helper";
 

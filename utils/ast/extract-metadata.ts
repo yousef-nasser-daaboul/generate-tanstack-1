@@ -1,4 +1,5 @@
-import { exceptClasses } from "~/client-config";
+import ts from "typescript";
+import { exceptClasses } from "../../client-config";
 
 export interface ParamDetails {
   paramName: string;
@@ -56,7 +57,6 @@ export interface EnumDetails {
 export function extractClassDetails(
   fileContent: string
 ): ClassDetails[] {
-  const ts = (window as any).ts;
   const sourceFile = ts.createSourceFile(
     "source.ts",
     fileContent,
@@ -143,32 +143,9 @@ export function extractClassDetails(
 }
 
 function detectMethodType(classNode: any, httpMethod: HttpMethod) {
-  let methodType = MethodType.Json;
+  let methodType = MethodType.FormData;
   try {
-    // A method can build its URL via query params or a path `.replace()`
-    // *and still* send a real request body (e.g. a bulk DELETE with a
-    // dto payload, or a GET with a filter body). Body detection must run
-    // regardless of HTTP verb, and take priority over the URL-building
-    // heuristics below - otherwise a body-bearing GET/DELETE gets
-    // misclassified as Replace/AddQueryParam and its body is dropped.
-    const contentStatement = classNode.body?.statements?.find(
-      (statement: any) =>
-        statement?.declarationList?.declarations?.[0]?.name?.text ===
-        "content_"
-    );
-    const initializer =
-      contentStatement?.declarationList?.declarations?.[0]?.initializer;
-
-    if (contentStatement) {
-      methodType =
-        initializer?.expression?.name?.text === "stringify"
-          ? MethodType.Json
-          : MethodType.FormData;
-    } else {
-      // No request body at all - this verb-agnostic pattern (e.g. a PUT
-      // that only needs an id in the URL, like UnlockUser) is the same
-      // shape NSwag emits for GET/DELETE query builders, so check it for
-      // every verb instead of only GET/DELETE.
+    if (httpMethod === "GET" || httpMethod === "DELETE") {
       const secondStatement = classNode.body?.statements?.[1];
       if (secondStatement && "elseStatement" in secondStatement) {
         methodType = MethodType.AddQueryParam;
@@ -176,6 +153,18 @@ function detectMethodType(classNode: any, httpMethod: HttpMethod) {
         secondStatement?.expression?.right?.expression?.name?.text === "replace"
       ) {
         methodType = MethodType.Replace;
+      }
+    } else {
+      const contentStatement = classNode.body?.statements?.find(
+        (statement: any) =>
+          statement?.declarationList?.declarations?.[0]?.name?.text ===
+          "content_"
+      );
+      const initializer =
+        contentStatement?.declarationList?.declarations?.[0]?.initializer;
+
+      if (initializer?.expression?.name?.text === "stringify") {
+        methodType = MethodType.Json;
       }
     }
   } catch (e) {
@@ -213,7 +202,6 @@ function detectMethodType(classNode: any, httpMethod: HttpMethod) {
 export function extractInterfaceDetails(
   fileContent: string
 ): InterfaceDetails[] {
-  const ts = (window as any).ts;
   const sourceFile = ts.createSourceFile(
     "source.ts",
     fileContent,
@@ -255,7 +243,6 @@ export function extractInterfaceDetails(
 }
 
 export function extractEnumDetails(fileContent: string): EnumDetails[] {
-  const ts = (window as any).ts;
   const sourceFile = ts.createSourceFile(
     "source.ts",
     fileContent,

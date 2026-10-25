@@ -1,5 +1,6 @@
-import { generateClient } from "~/utils/generate-clients/generate-clients";
-import { generateTanstack } from "~/utils/generate-tanstack";
+import { generateClient } from "../utils/generate-clients/generate-clients";
+import { generateTanstack } from "../utils/generate-tanstack";
+import { formatContent } from "./format-content";
 
 export async function generate(
   fileContent: string,

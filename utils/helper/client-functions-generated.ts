@@ -124,7 +124,7 @@ export interface CustomConfig {
       if (value == undefined) return;
   
       if (key.includes("_")) {
-        const [key1, key2] = key.split("_");
+        const [key1 = "", key2 = ""] = key.split("_");
         key = \`\${toUpperCamelCase(key1)}.\${toUpperCamelCase(key2)}\`;
       }
   
@@ -147,6 +147,13 @@ export interface CustomConfig {
   
     return url_.toString();
   }
+`;
+
+export const fileParameterGenerated = `
+export interface FileParameter {
+  data: any;
+  fileName: string;
+}
 `;
 
 export const clientStartGenerated = `//----------------------

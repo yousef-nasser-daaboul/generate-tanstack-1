@@ -3,7 +3,7 @@ import {
   exceptedParameters,
   exceptMethods,
   mutateParamsDtoNames,
-} from "~/client-config";
+} from "../../client-config";
 import {
   MethodType,
   type MethodDetails,

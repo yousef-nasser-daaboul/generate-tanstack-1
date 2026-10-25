@@ -1,4 +1,4 @@
-import { classStructure } from "~/client-config";
+import { classStructure } from "../../client-config";
 import { type ClassDetails } from "../ast/extract-metadata";
 import { generateMethods } from "./generate-methods";
 import { generateParamsInterfaces } from "./generate-params-interfaces";

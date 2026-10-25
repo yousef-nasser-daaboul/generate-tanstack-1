@@ -7,6 +7,68 @@ export enum Projects {
   "AmanPayBusiness" = "Aman-Pay Business",
 }
 
+export const CLIENTS_BY_PROJECT: Record<Projects, string[]> = {
+  [Projects.Sahab]: [
+    "Common",
+    "Complaint",
+    "Customer",
+    "FCExchange",
+    "Finance",
+    "EntityManagement",
+    "Compliance",
+    "Utilities",
+    "Remittance",
+    "Accounting",
+    "SystemSettings",
+  ],
+  [Projects.Dinarak]: [
+    "Common",
+    "Complaint",
+    "Customer",
+    "FCExchange",
+    "Finance",
+    "EntityManagement",
+    "Compliance",
+    "Utilities",
+    "Remittance",
+    "Accounting",
+    "SystemSettings",
+    "custom",
+    "Global",
+    "Support",
+  ],
+  [Projects.Masar]: [
+    "Vehicle",
+    "Pricing",
+    "Shared",
+    "Support",
+    "EntityManagement",
+    "FileManagement",
+    "SystemSettings",
+  ],
+  [Projects.Bayan]: [
+    "EmployeeManagement",
+    "LeaveManagement",
+    "Shared",
+    "EntityManagement",
+    "FileManagement",
+    "SystemSettings",
+  ],
+  [Projects.AmanPay]: [
+    "Wallet",
+    "Support",
+    "EntityManagement",
+    "FileManagement",
+    "SystemSettings",
+  ],
+  [Projects.AmanPayBusiness]: [
+    "Wallet",
+    "WalletBusiness",
+    "FileManagement",
+    "SystemSettings",
+  ],
+};
+
 export async function downloadModule(module: string, project: Projects) {
   const response = await fetch(
     project === Projects.Sahab
@@ -14,7 +76,7 @@ export async function downloadModule(module: string, project: Projects) {
       : project === Projects.Dinarak
         ? `https://dev-dinarak.asasstech.com:443/api/Global/ClientCode/Get?module=${module}`
         : project === Projects.Masar
-          ? `https://dev.masarcars.com/ClientCode/Generate?module=${module}`
+          ? `https://dev-masar.asasstech.com:443/ClientCode/Generate?module=${module}`
           : project === Projects.Bayan
             ? `https://dev-bayan.asasstech.com:443/ClientCode/Generate?module=${module}`
             : project === Projects.AmanPay
@@ -23,10 +85,7 @@ export async function downloadModule(module: string, project: Projects) {
   );
 
   if (!response.ok) {
-    const body = await response.text().catch(() => "");
-    throw new Error(
-      body || `Failed to download module: ${response.statusText}`
-    );
+    throw new Error(`Failed to download module: ${response.statusText}`);
   }
   return await response.text(); // Use .json() or .blob() if needed
 }

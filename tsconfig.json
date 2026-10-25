@@ -1,4 +1,10 @@
 {
   // https://nuxt.com/docs/guide/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json"
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    // cli/generate.ts imports composables/generate.ts with an explicit .ts
+    // extension — required for tsx (and Node's own ESM loader) to resolve it
+    // when the CLI is run as a real subprocess; see server/utils/run-generate-cli.ts.
+    "allowImportingTsExtensions": true
+  }
 }

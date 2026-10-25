@@ -1,4 +1,4 @@
-import { exceptedTypes, replacementTypes } from "~/client-config";
+import { exceptedTypes, replacementTypes } from "../../client-config";
 import {
   HttpMethod,
   type ClassDetails,

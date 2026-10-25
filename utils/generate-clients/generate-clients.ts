@@ -6,10 +6,11 @@ import { extractEnumDetails } from "../ast/extract-metadata";
 import {
   clientFunctionsGenerated,
   clientStartGenerated,
+  fileParameterGenerated,
 } from "../helper/client-functions-generated";
 import { generateInterfaces } from "./generate-interfaces";
 import { generateClasses } from "./generate-classes";
-import { skipInterfaces } from "~/client-config";
+import { skipInterfaces } from "../../client-config";
 
 export function generateClient(fileContent: string): string {
   let content = clientStartGenerated;
@@ -30,6 +31,16 @@ export function generateClient(fileContent: string): string {
   const interfaces = extractInterfaceDetails(fileContent);
 
   content += generateInterfaces(interfaces);
+
+  // NSwag only sometimes emits FileParameter (newer toolchains leave it out),
+  // but the generated params interfaces still reference it for multipart
+  // uploads. Declare it here whenever it's used and the input didn't.
+  const declaresFileParameter = interfaces.some(
+    (interfaceInfo) => interfaceInfo.interfaceName === "FileParameter"
+  );
+  if (!declaresFileParameter && /\bFileParameter\b/.test(content)) {
+    content += fileParameterGenerated;
+  }
 
   const enums = extractEnumDetails(fileContent);
 

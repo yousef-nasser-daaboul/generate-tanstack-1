@@ -1,4 +1,4 @@
-import { interfaceStructure, skipInterfaces } from "~/client-config";
+import { interfaceStructure, skipInterfaces } from "../../client-config";
 import type { InterfaceDetails } from "../ast/extract-metadata";
 
 export function generateInterfaces(interfaces: InterfaceDetails[]) {

@@ -1,17 +1,8 @@
 <script setup lang="ts">
-import { downloadModule, Projects } from "~/composables/download-module";
+import { CLIENTS_BY_PROJECT, downloadModule, Projects } from "~/composables/download-module";
 import { generate } from "~/composables/generate";
 import { download } from "~/composables/download";
 import FileUpload from "~/components/FileUpload.vue";
-
-useHead({
-  script: [
-    {
-      src: "https://cdnjs.cloudflare.com/ajax/libs/typescript/5.7.3/typescript.min.js",
-      async: true,
-    },
-  ],
-});
 
 definePageMeta({
   middleware: "auth",
@@ -19,76 +10,7 @@ definePageMeta({
 
 // const module = useState<Projects>("module");
 
-// Clients : Common, Customer, FCExchange, Finance, EntityManagement, Compliance, Utilities, Remittance, Accounting, SystemSettings
-
-const sahabClients = [
-  "Common",
-  "Complaint",
-  "Customer",
-  "FCExchange",
-  "Finance",
-  "EntityManagement",
-  "Compliance",
-  "Utilities",
-  "Remittance",
-  "Accounting",
-  "SystemSettings",
-];
-const dinarakClients = [
-  "Common",
-  "Complaint",
-  "Customer",
-  "FCExchange",
-  "Finance",
-  "EntityManagement",
-  "Compliance",
-  "Utilities",
-  "Remittance",
-  "Accounting",
-  "SystemSettings",
-  "custom",
-  "Global",
-  "Support",
-];
-const masarClients = [
-  "Vehicle",
-  "Pricing",
-  "Shared",
-  "Support",
-  "EntityManagement",
-  "FileManagement",
-  "SystemSettings",
-];
-const bayanClients = [
-  "EmployeeManagement",
-  "LeaveManagement",
-  "Shared",
-  "EntityManagement",
-  "FileManagement",
-  "SystemSettings",
-];
-const amanPayClients = [
-  "Wallet",
-  "Support",
-  "EntityManagement",
-  "FileManagement",
-  "SystemSettings",
-];
-const amanPayBusinessClients = [
-  "Wallet",
-  "WalletBusiness",
-  "FileManagement",
-  "SystemSettings",
-];
-
-const clients = {
-  [Projects.Sahab]: sahabClients,
-  [Projects.Dinarak]: dinarakClients,
-  [Projects.Masar]: masarClients,
-  [Projects.Bayan]: bayanClients,
-  [Projects.AmanPay]: amanPayClients,
-  [Projects.AmanPayBusiness]: amanPayBusinessClients,
-};
+const clients = CLIENTS_BY_PROJECT;
 
 enum generateType {
   Select = "Select",
@@ -146,13 +68,7 @@ async function downloadFile() {
 
     if (!fileContent) return;
   } catch (e) {
-    downloadLoading.value = false;
-    toast.add({
-      title: "Failed to download module",
-      description: e instanceof Error ? e.message : "Unknown error",
-      color: "error",
-    });
-    return;
+    console.error("Error Network");
   }
   downloadLoading.value = false;
 
@@ -177,7 +93,6 @@ async function generateContent(fileContent: string) {
 
 const withTanstack = ref(false);
 const copied = ref(false);
-const toast = useToast();
 const runtimeConfig = useRuntimeConfig();
 const appVersion = computed(() => runtimeConfig.public.appVersion || "dev");
 
